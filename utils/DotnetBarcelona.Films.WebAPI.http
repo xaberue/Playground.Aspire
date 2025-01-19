@@ -1,0 +1,16 @@
+@DotnetBarcelona.Movies.WebAPI_HostAddress = http://localhost:5260
+
+GET {{DotnetBarcelona.Movies.WebAPI_HostAddress}}/films/
+Accept: application/json
+
+###
+
+POST {{DotnetBarcelona.Movies.WebAPI_HostAddress}}/film/
+Content-Type: application/json
+
+{
+  "Name": "Inception",
+  "ReleaseDate": "2010-07-16T00:00:00",
+  "Categories": [1, 4, 8],
+  "Cast": [10, 23]
+}

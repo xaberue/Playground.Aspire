@@ -1,0 +1,66 @@
+﻿@page "/film-detail/{filmId:int}"
+
+@using ChustaSoft.Common.Helpers
+@using DotnetBarcelona.Actors.Shared
+@using DotnetBarcelona.Films.Shared
+@using DotnetBarcelona.FilmsManager.Shared
+@using DotnetBarcelona.FilmsManager.WebUI.Services
+
+@rendermode InteractiveServer
+
+@inject FilmsApiService FilmsApiService
+@inject NavigationManager Navigation
+
+
+<FluentCard>
+    <FluentStack HorizontalAlignment="HorizontalAlignment.Left" class="actions-container">
+        <FluentButton IconStart="@(new Icons.Regular.Size16.ArrowLeft())" Appearance="Appearance.Accent" OnClick="OnNavigateBack">Back</FluentButton>
+    </FluentStack>
+
+    @if (film is null) 
+    {
+        <div style="width: 300px;display: grid; grid-gap: 12px; grid-auto-flow: column;">
+            <FluentProgressRing Min="0" Max="100" Value="75"></FluentProgressRing>
+            <FluentProgressRing></FluentProgressRing>
+        </div>
+    }
+    else
+    {
+        <FluentLabel Typo="Typography.H1" Color="@Color.Accent">@film.Name</FluentLabel>
+        <FluentLabel Typo="Typography.H3" Color="@Color.Accent">Year of release: @film.YearReleased</FluentLabel>
+        <FluentLabel Typo="Typography.Body" Color="@Color.Accent">Categories</FluentLabel>
+        <ul>
+            @foreach (var category in film.Categories)
+            {
+                <li>@category</li>
+            }
+        </ul>
+
+        <FluentLabel Typo="Typography.Body" Color="@Color.Accent">Cast</FluentLabel>
+        <ul>
+            @foreach (var actor in film.Cast)
+            {
+                <li>@actor.ToString()</li>
+            }
+        </ul>
+    }
+</FluentCard>
+
+
+@code {
+
+    [Parameter]
+    public int FilmId { get; set; }
+
+    private FilmDetailDto? film;
+
+    protected override async Task OnInitializedAsync()
+    {
+        film = await FilmsApiService.GetAsync(FilmId);
+    }
+
+    private void OnNavigateBack() 
+    {
+        Navigation.NavigateTo("/");
+    }
+}
