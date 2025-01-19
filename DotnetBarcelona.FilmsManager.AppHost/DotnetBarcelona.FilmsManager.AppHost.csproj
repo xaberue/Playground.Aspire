@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>de0421e2-5b5f-4724-b074-75178c9e45d0</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DotnetBarcelona.Actors.WebAPI\DotnetBarcelona.Actors.WebAPI.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.Films.WebAPI\DotnetBarcelona.Films.WebAPI.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebAPI\DotnetBarcelona.FilmsManager.WebAPI.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebUI\DotnetBarcelona.FilmsManager.WebUI.csproj" />
+
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+		<PackageReference Include="Aspire.Hosting.SqlServer" Version="9.0.0" />
+		<PackageReference Include="Aspire.Hosting.Redis" Version="9.0.0" />
+	</ItemGroup>
+
+</Project>
