@@ -5,7 +5,8 @@ option csharp_namespace = "DotnetBarcelona.Actors";
 package actorsgrpc;
 
 service Actors {
-    rpc Get(GetRequest) returns (GetResponse);
+    rpc GetAll(GetAllActorsRequest) returns (GetAllActorsResponse);
+    rpc Get(GetActorRequest) returns (GetActorResponse);
 }
 
 
@@ -15,10 +16,16 @@ message ActorModel {
 	string date_of_birth = 3;
 }
 
-message GetResponse{
+message GetAllActorsResponse{
+    repeated ActorModel actors = 1;
+}
+
+message GetAllActorsRequest{ }
+
+message GetActorResponse{
     ActorModel actor = 1;
 }
 
-message GetRequest{
+message GetActorRequest{
 	int32 id = 1;
 }

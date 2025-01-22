@@ -5,8 +5,10 @@ option csharp_namespace = "DotnetBarcelona.Films";
 package filmsgrpc;
 
 service Films {
-    rpc GetAll(GetAllRequest) returns (GetAllResponse);
-    rpc Register(CreateRequest) returns (CreateResponse);
+    rpc GetAll(GetAllFilmsRequest) returns (GetAllFilmsResponse);
+    rpc Get(GetFilmRequest) returns (GetFilmResponse);
+    rpc Register(CreateFilmRequest) returns (CreateFilmResponse);
+    rpc Delete(DeleteFilmRequest) returns (DeleteFilmResponse);
 }
 
 
@@ -18,17 +20,32 @@ message FilmModel {
     repeated int32 cast = 5;
 }
 
-message GetAllRequest{ }
+message GetAllFilmsRequest{ }
 
-message GetAllResponse{
+message GetAllFilmsResponse{
     repeated FilmModel films = 1;
 }
 
-message CreateRequest{
+message GetFilmRequest{
+    int32 id = 1;
+}
+
+message GetFilmResponse{
+    FilmModel film = 1;
+}
+
+
+message CreateFilmRequest{
     string name = 1;
 	string release_date = 2;
     repeated int32 categories = 3;
     repeated int32 cast = 4;
 }
 
-message CreateResponse{ }
+message CreateFilmResponse{ }
+
+message DeleteFilmRequest{
+    int32 id = 1;
+}
+
+message DeleteFilmResponse{ }

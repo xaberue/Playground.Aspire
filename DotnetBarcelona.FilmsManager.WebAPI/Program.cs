@@ -55,24 +55,24 @@ app.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
         var filmsClient = new Films.FilmsClient(filmsChannel);
         var actorsClient = new Actors.ActorsClient(actorsChannel);
 
-        var response = await filmsClient.GetAllAsync(new GetAllRequest());
+        var response = await filmsClient.GetAllAsync(new GetAllFilmsRequest());
 
         var actors = new List<ActorModel>();
 
         foreach (var actorId in response.Films.SelectMany(x => x.Cast).Distinct())
         {
-            var actorResponse = await actorsClient.GetAsync(new GetRequest { Id = actorId });
+            var actorResponse = await actorsClient.GetAsync(new GetActorRequest { Id = actorId });
 
             actors.Add(actorResponse.Actor);
         }
 
-    return response.Films.Select(x => new FilmGridDto(
-        x.Id,
-        x.Name,
-        DateTime.Parse(x.ReleaseDate).Year,
-        x.Categories.Select(x => ((FilmCategory)x).ToString()).ToArray(),
-        actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()
-        ));
+        return response.Films.Select(x => new FilmGridDto(
+            x.Id,
+            x.Name,
+            DateTime.Parse(x.ReleaseDate).Year,
+            x.Categories.Select(x => ((FilmCategory)x).ToString()).ToArray(),
+            actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()
+            ));
     }
     else
     {
@@ -93,56 +93,140 @@ app.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
             x.Name,
             x.ReleaseDate.Year,
             x.Categories.Select(x => x.ToString()).ToArray(),
-            actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()));
+            actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray())
+        );
     }
 })
 .WithName("GetAllFilms");
 
 app.MapGet("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
 {
-    var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
-    var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
-    var film = await filmsClient.GetFromJsonAsync<FilmDto>($"/film/{filmId}");
-    var actors = new List<ActorDto>();
-
-    foreach (var actorId in film.Cast)
+    if (grpcEnabled)
     {
-        var actor = await actorsClient.GetFromJsonAsync<ActorDto>($"/actor/{actorId}");
+        using var filmsChannel = GrpcChannel.ForAddress(filmsApiUrl);
+        using var actorsChannel = GrpcChannel.ForAddress(actorsApiUrl);
 
-        actors.Add(actor);
+        var filmsClient = new Films.FilmsClient(filmsChannel);
+        var actorsClient = new Actors.ActorsClient(actorsChannel);
+
+        var response = await filmsClient.GetAsync(new GetFilmRequest { Id = filmId });
+
+        var actors = new List<ActorModel>();
+
+        foreach (var actorId in response.Film.Cast)
+        {
+            var actorResponse = await actorsClient.GetAsync(new GetActorRequest { Id = actorId });
+
+            actors.Add(actorResponse.Actor);
+        }
+
+        return new FilmDetailDto(
+            response.Film.Id,
+            response.Film.Name,
+            DateTime.Parse(response.Film.ReleaseDate).Year,
+            response.Film.Categories.Select(x => ((FilmCategory)x).ToString()).ToArray(),
+            actors.Select(x => new ActorDto(x.Id, x.Name, DateTime.Parse(x.DateOfBirth)))
+        );
     }
+    else
+    {
+        var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+        var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
+        var film = await filmsClient.GetFromJsonAsync<FilmDto>($"/film/{filmId}");
+        var actors = new List<ActorDto>();
 
-    return new FilmDetailDto(
-        film.Id,
-        film.Name,
-        film.ReleaseDate.Year,
-        film.Categories.Select(x => x.ToString()).ToArray(),
-        actors);
+        foreach (var actorId in film.Cast)
+        {
+            var actor = await actorsClient.GetFromJsonAsync<ActorDto>($"/actor/{actorId}");
+
+            actors.Add(actor);
+        }
+
+        return new FilmDetailDto(
+            film.Id,
+            film.Name,
+            film.ReleaseDate.Year,
+            film.Categories.Select(x => x.ToString()).ToArray(),
+            actors);
+    }
 })
 .WithName("GetFilm");
 
-app.MapPost("/film", (IHttpClientFactory httpClientFactory, FilmCreation filmCreation) =>
+app.MapPost("/film", async (IHttpClientFactory httpClientFactory, FilmCreation filmCreation) =>
 {
-    var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+    if (grpcEnabled)
+    {
+        using var filmsChannel = GrpcChannel.ForAddress(filmsApiUrl);
+        
+        var filmsClient = new Films.FilmsClient(filmsChannel);
 
-    filmsClient.PostAsJsonAsync("/film", filmCreation);
+        var createRequest = new CreateFilmRequest
+        {
+            Name = filmCreation.Name,
+            ReleaseDate = filmCreation.ReleaseDate.ToString()
+        };
+        createRequest.Categories.AddRange(filmCreation.Categories.Select(x => (int)x));
+        createRequest.Cast.AddRange(filmCreation.Cast);
 
-    return Results.Created();
+        await filmsClient.RegisterAsync(createRequest);
+
+        return Results.Created();
+    }
+    else
+    {
+        var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+
+        await filmsClient.PostAsJsonAsync("/film", filmCreation);
+
+        return Results.Created();
+    }
 })
 .WithName("RegisterFilm");
 
 app.MapDelete("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
 {
-    var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+    if (grpcEnabled)
+    {
+        using var filmsChannel = GrpcChannel.ForAddress(filmsApiUrl);
 
-    return await filmsClient.DeleteAsync($"/film/{filmId}");
+        var filmsClient = new Films.FilmsClient(filmsChannel);
+
+        var deleteRequest = new DeleteFilmRequest { Id = filmId };
+
+        await filmsClient.DeleteAsync(deleteRequest);
+    }
+    else
+    {
+        var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+
+        await filmsClient.DeleteAsync($"/film/{filmId}");
+    }
+
+    return Results.NoContent();
 });
 
-app.MapGet("/actors", (IHttpClientFactory httpClientFactory) =>
+app.MapGet("/actors", async (IHttpClientFactory httpClientFactory) =>
 {
-    var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
+    if (grpcEnabled)
+    {
+        using var actorsChannel = GrpcChannel.ForAddress(actorsApiUrl);
 
-    return actorsClient.GetFromJsonAsAsyncEnumerable<ActorDto>("/actors");
+        var actorsClient = new Actors.ActorsClient(actorsChannel);
+
+        var response = await actorsClient.GetAllAsync(new GetAllActorsRequest());
+
+        return response.Actors.Select(x => new ActorDto(
+            x.Id,
+            x.Name,
+            DateTime.Parse(x.DateOfBirth)
+            )).ToArray();
+    }
+    else
+    {
+        var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
+
+        return await actorsClient.GetFromJsonAsync<ActorDto[]>("/actors");
+    }
 })
 .WithName("GetAllActors");
 
