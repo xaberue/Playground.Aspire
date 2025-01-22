@@ -1,9 +1,14 @@
+using DotnetBarcelona.Actors;
 using DotnetBarcelona.Actors.Shared;
+using DotnetBarcelona.Films;
 using DotnetBarcelona.Films.Shared;
 using DotnetBarcelona.FilmsManager.Shared;
 using DotnetBarcelona.FilmsManager.WebAPI.Configuration;
+using Grpc.Net.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
 
 builder.AddServiceDefaults();
 
@@ -42,24 +47,54 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
 {
-    var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
-    var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
-    var films = await filmsClient.GetFromJsonAsync<FilmDto[]>("/films");
-    var actors = new List<ActorDto>();
-
-    foreach (var actorId in films.SelectMany(x => x.Cast).Distinct())
+    if (grpcEnabled)
     {
-        var actor = await actorsClient.GetFromJsonAsync<ActorDto>($"/actor/{actorId}");
+        using var filmsChannel = GrpcChannel.ForAddress(filmsApiUrl);
+        using var actorsChannel = GrpcChannel.ForAddress(actorsApiUrl);
 
-        actors.Add(actor);
-    }
+        var filmsClient = new Films.FilmsClient(filmsChannel);
+        var actorsClient = new Actors.ActorsClient(actorsChannel);
 
-    return films.Select(x => new FilmGridDto(
+        var response = await filmsClient.GetAllAsync(new GetAllRequest());
+
+        var actors = new List<ActorModel>();
+
+        foreach (var actorId in response.Films.SelectMany(x => x.Cast).Distinct())
+        {
+            var actorResponse = await actorsClient.GetAsync(new GetRequest { Id = actorId });
+
+            actors.Add(actorResponse.Actor);
+        }
+
+    return response.Films.Select(x => new FilmGridDto(
         x.Id,
         x.Name,
-        x.ReleaseDate.Year,
-        x.Categories.Select(x => x.ToString()).ToArray(),
-        actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()));
+        DateTime.Parse(x.ReleaseDate).Year,
+        x.Categories.Select(x => ((FilmCategory)x).ToString()).ToArray(),
+        actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()
+        ));
+    }
+    else
+    {
+        var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
+        var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
+        var films = await filmsClient.GetFromJsonAsync<FilmDto[]>("/films");
+        var actors = new List<ActorDto>();
+
+        foreach (var actorId in films.SelectMany(x => x.Cast).Distinct())
+        {
+            var actor = await actorsClient.GetFromJsonAsync<ActorDto>($"/actor/{actorId}");
+
+            actors.Add(actor);
+        }
+
+        return films.Select(x => new FilmGridDto(
+            x.Id,
+            x.Name,
+            x.ReleaseDate.Year,
+            x.Categories.Select(x => x.ToString()).ToArray(),
+            actors.Where(y => x.Cast.Contains(y.Id)).Select(y => y.Name).ToArray()));
+    }
 })
 .WithName("GetAllFilms");
 

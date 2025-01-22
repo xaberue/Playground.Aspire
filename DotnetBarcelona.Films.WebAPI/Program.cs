@@ -2,6 +2,7 @@ using DotnetBarcelona.Films.Shared;
 using DotnetBarcelona.Films.WebAPI.Infrastructure;
 using DotnetBarcelona.Films.WebAPI.Infrastructure.Migrations;
 using DotnetBarcelona.Films.WebAPI.Models;
+using DotnetBarcelona.Films.WebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddGrpc();
 
 builder.AddSqlServerDbContext<FilmsDbContext>("FilmsDb");
 
@@ -22,6 +25,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapGrpcService<FilmsGrpcService>();
 
 app.MapGet("/films", (FilmsDbContext db) =>
 {

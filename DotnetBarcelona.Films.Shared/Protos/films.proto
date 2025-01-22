@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "DotnetBarcelona.Films";
+
+package filmsgrpc;
+
+service Films {
+    rpc GetAll(GetAllRequest) returns (GetAllResponse);
+}
+
+
+message FilmModel {
+	int32 id = 1;
+	string name = 2;
+	string release_date = 3;
+    repeated int32 categories = 4;
+    repeated int32 cast = 5;
+}
+
+message GetAllResponse{
+    repeated FilmModel films = 1;
+}
+
+message GetAllRequest{ }

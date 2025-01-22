@@ -2,11 +2,14 @@ using DotnetBarcelona.Actors.Shared;
 using DotnetBarcelona.Actors.WebAPI.Infrastructure;
 using DotnetBarcelona.Actors.WebAPI.Infrastructure.Migrations;
 using DotnetBarcelona.Actors.WebAPI.Models;
+using DotnetBarcelona.Actors.WebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddGrpc();
 
 builder.Services.AddOpenApi();
 
@@ -22,6 +25,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapGrpcService<ActorsGrpcService>();
 
 app.MapGet("/actor/{id}", async (ActorsDbContext db, int id) =>
 {

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "DotnetBarcelona.Actors";
+
+package actorsgrpc;
+
+service Actors {
+    rpc Get(GetRequest) returns (GetResponse);
+}
+
+
+message ActorModel {
+	int32 id = 1;
+	string name = 2;
+	string date_of_birth = 3;
+}
+
+message GetResponse{
+    ActorModel actor = 1;
+}
+
+message GetRequest{
+	int32 id = 1;
+}
