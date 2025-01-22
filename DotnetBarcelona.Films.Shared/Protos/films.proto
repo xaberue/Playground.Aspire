@@ -6,6 +6,7 @@ package filmsgrpc;
 
 service Films {
     rpc GetAll(GetAllRequest) returns (GetAllResponse);
+    rpc Register(CreateRequest) returns (CreateResponse);
 }
 
 
@@ -17,8 +18,17 @@ message FilmModel {
     repeated int32 cast = 5;
 }
 
+message GetAllRequest{ }
+
 message GetAllResponse{
     repeated FilmModel films = 1;
 }
 
-message GetAllRequest{ }
+message CreateRequest{
+    string name = 1;
+	string release_date = 2;
+    repeated int32 categories = 3;
+    repeated int32 cast = 4;
+}
+
+message CreateResponse{ }

@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 
 builder.Services.AddOpenApi();
 
@@ -22,6 +23,7 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();

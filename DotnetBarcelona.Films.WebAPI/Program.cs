@@ -12,6 +12,7 @@ builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 
 builder.AddSqlServerDbContext<FilmsDbContext>("FilmsDb");
 
@@ -22,6 +23,7 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();
