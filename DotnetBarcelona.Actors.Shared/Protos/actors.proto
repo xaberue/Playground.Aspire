@@ -1,11 +1,17 @@
 syntax = "proto3";
 
 option csharp_namespace = "DotnetBarcelona.Actors";
+import "google/api/annotations.proto";
 
 package actorsgrpc;
 
 service Actors {
-    rpc GetAll(GetAllActorsRequest) returns (GetAllActorsResponse);
+    rpc GetAll(GetAllActorsRequest) returns (GetAllActorsResponse){
+		option (google.api.http) = {
+			get: "/actors-transcoding"
+		};
+	}
+	
     rpc Get(GetActorRequest) returns (GetActorResponse);
 }
 

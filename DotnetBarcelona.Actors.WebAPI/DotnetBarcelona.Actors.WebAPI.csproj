@@ -4,12 +4,14 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
 		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.67.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="9.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
@@ -23,8 +25,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DotnetBarcelona.Actors.Shared\DotnetBarcelona.Actors.Shared.csproj" />
-	  <ProjectReference Include="..\DotnetBarcelona.FilmsManager.ServiceDefaults\DotnetBarcelona.FilmsManager.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.Actors.Shared\DotnetBarcelona.Actors.Shared.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.ServiceDefaults\DotnetBarcelona.FilmsManager.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>
