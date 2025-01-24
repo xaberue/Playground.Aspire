@@ -2,17 +2,22 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.ServiceDefaults\DotnetBarcelona.FilmsManager.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.Shared\DotnetBarcelona.FilmsManager.Shared.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebUI.Client\DotnetBarcelona.FilmsManager.WebUI.Client.csproj" />
 
+		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="9.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.3" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.3" />
 		<PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
 		<PackageReference Include="Grpc.Tools" Version="2.69.0">
 			<PrivateAssets>all</PrivateAssets>

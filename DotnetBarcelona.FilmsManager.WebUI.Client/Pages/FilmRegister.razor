@@ -3,9 +3,9 @@
 @using ChustaSoft.Common.Helpers
 @using DotnetBarcelona.Actors.Shared
 @using DotnetBarcelona.Films.Shared
-@using DotnetBarcelona.FilmsManager.WebUI.Services
+@using DotnetBarcelona.FilmsManager.WebUI.Client.Services
 
-@rendermode InteractiveServer
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 @inject ActorsApiService ActorsApiService
 @inject FilmsApiService FilmsApiService
@@ -51,7 +51,7 @@
 
     private FilmCreation filmCreationModel = new FilmCreation();
     private List<FilmCategory> categories = [];
-    private List<ActorDto> actors = [];
+    private IEnumerable<ActorDto> actors = [];
 
     private FilmCategory selectedFilmCategory;
     private ActorDto? selectedActor;

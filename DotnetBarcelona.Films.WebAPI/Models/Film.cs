@@ -33,7 +33,7 @@ public class Film
     }
 
     public Film(int id, string name, DateTime releaseDate, FilmCategory[] categories, int[] cast)
-        : this (id, name, releaseDate)
+        : this(id, name, releaseDate)
     {
         Categories = categories;
         Cast = cast;
