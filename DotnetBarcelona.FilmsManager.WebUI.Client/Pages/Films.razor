@@ -3,13 +3,13 @@
 
 @using DotnetBarcelona.Films.Shared
 @using DotnetBarcelona.FilmsManager.Shared
-@using DotnetBarcelona.FilmsManager.WebUI.Services
+@using DotnetBarcelona.FilmsManager.WebUI.Client.Services
 
-@rendermode InteractiveServer
-@attribute [OutputCache(Duration = 5)]
 
 @inject FilmsApiService FilmsApiService
 @inject NavigationManager Navigation
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 
 <PageTitle>Films</PageTitle>
@@ -18,13 +18,13 @@
 
 <p>These are all the films that are within the system.</p>
 
-@if (films == null)
+@if (films is null)
 {
-    <p><em>Loading...</em></p>
+    <FluentProgressRing></FluentProgressRing>
 }
 else
 {
-    <FluentDataGrid Id="filmsgrid" Items="@films" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="FilmGridDto" Pagination="@pagination">
+    <FluentDataGrid Id="filmsgrid" Items="@films.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="FilmGridDto" Pagination="@pagination">
         <PropertyColumn Title="Name" Property="@(c => c!.Name)" Sortable="true" Align="Align.Start" />
         <PropertyColumn Title="Categories" Property="@(c => string.Join(", ", c.Categories))" Sortable="true" Align="Align.Start" />
         <PropertyColumn Title="Categories" Property="@(c => string.Join(", ", c.Cast))" Sortable="true" Align="Align.Start" />
@@ -45,7 +45,7 @@ else
 @code {
 
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
-    private IQueryable<FilmGridDto>? films;
+    private IEnumerable<FilmGridDto>? films;
 
     protected override async Task OnInitializedAsync()
     {

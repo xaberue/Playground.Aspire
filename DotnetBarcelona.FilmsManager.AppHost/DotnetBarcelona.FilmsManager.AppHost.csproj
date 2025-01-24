@@ -14,8 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\DotnetBarcelona.Actors.WebAPI\DotnetBarcelona.Actors.WebAPI.csproj" />
 		<ProjectReference Include="..\DotnetBarcelona.Films.WebAPI\DotnetBarcelona.Films.WebAPI.csproj" />
-		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebAPI\DotnetBarcelona.FilmsManager.WebAPI.csproj" />
-		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebUI\DotnetBarcelona.FilmsManager.WebUI.csproj" />
+		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebUI.Server\DotnetBarcelona.FilmsManager.WebUI.Server.csproj" />
 
 		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
 		<PackageReference Include="Aspire.Hosting.SqlServer" Version="9.0.0" />

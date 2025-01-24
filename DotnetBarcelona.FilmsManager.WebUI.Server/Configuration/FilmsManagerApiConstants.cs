@@ -1,4 +1,4 @@
-﻿namespace DotnetBarcelona.FilmsManager.WebAPI.Configuration;
+﻿namespace DotnetBarcelona.FilmsManager.WebUI.Server.Configuration;
 
 public static class FilmsManagerApiConstants
 {
