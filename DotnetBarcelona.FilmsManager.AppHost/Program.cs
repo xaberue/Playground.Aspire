@@ -14,15 +14,10 @@ var filmsApi = builder.AddProject<Projects.DotnetBarcelona_Films_WebAPI>("films-
     .WithReference(filmsDb)
     .WaitFor(filmsDb);
 
-var apiService = builder.AddProject<Projects.DotnetBarcelona_FilmsManager_WebAPI>("webapi")
-    .WithEnvironment("ConnectionStrings__FilmsApiUrl", filmsApi.GetEndpoint("https"))
-    .WithEnvironment("ConnectionStrings__ActorsApiUrl", actorsApi.GetEndpoint("https"));
-
-builder.AddProject<Projects.DotnetBarcelona_FilmsManager_WebUI>("webui")
-    .WithExternalHttpEndpoints()
+var apiService = builder.AddProject<Projects.DotnetBarcelona_FilmsManager_WebUI_Server>("webui")
     .WithReference(cache)
     .WaitFor(cache)
-    .WithReference(apiService)
-    .WaitFor(apiService);
+    .WithEnvironment("ConnectionStrings__FilmsApiUrl", filmsApi.GetEndpoint("https"))
+    .WithEnvironment("ConnectionStrings__ActorsApiUrl", actorsApi.GetEndpoint("https"));
 
 builder.Build().Run();

@@ -4,9 +4,9 @@
 @using DotnetBarcelona.Actors.Shared
 @using DotnetBarcelona.Films.Shared
 @using DotnetBarcelona.FilmsManager.Shared
-@using DotnetBarcelona.FilmsManager.WebUI.Services
+@using DotnetBarcelona.FilmsManager.WebUI.Client.Services
 
-@rendermode InteractiveServer
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 @inject FilmsApiService FilmsApiService
 @inject NavigationManager Navigation
@@ -19,10 +19,7 @@
 
     @if (film is null) 
     {
-        <div style="width: 300px;display: grid; grid-gap: 12px; grid-auto-flow: column;">
-            <FluentProgressRing Min="0" Max="100" Value="75"></FluentProgressRing>
-            <FluentProgressRing></FluentProgressRing>
-        </div>
+        <FluentProgressRing></FluentProgressRing>
     }
     else
     {

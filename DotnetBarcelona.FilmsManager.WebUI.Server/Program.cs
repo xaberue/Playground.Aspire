@@ -1,15 +1,25 @@
 using DotnetBarcelona.Actors.Shared;
 using DotnetBarcelona.Films.Shared;
+using DotnetBarcelona.FilmsManager.ServiceDefaults;
 using DotnetBarcelona.FilmsManager.Shared;
-using DotnetBarcelona.FilmsManager.WebAPI.Configuration;
+using DotnetBarcelona.FilmsManager.WebUI.Server.Components;
+using DotnetBarcelona.FilmsManager.WebUI.Server.Configuration;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.AddRedisOutputCache("cache");
 
 builder.Services.AddProblemDetails();
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddFluentUIComponents();
 
 var filmsApiUrl = builder.Configuration.GetConnectionString("FilmsApiUrl")
     ?? throw new ArgumentException("FilmsAPIUrl is mandatory");
@@ -33,14 +43,24 @@ builder.Services.AddHttpClient(
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
-
 if (app.Environment.IsDevelopment())
 {
+    app.UseWebAssemblyDebugging();
     app.MapOpenApi();
 }
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseHsts();
+}
 
-app.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
+app.UseHttpsRedirection();
+
+app.UseAntiforgery();
+
+var group = app.MapGroup("/api");
+
+group.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
 {
     var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
     var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
@@ -63,7 +83,7 @@ app.MapGet("/films", async (IHttpClientFactory httpClientFactory) =>
 })
 .WithName("GetAllFilms");
 
-app.MapGet("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
+group.MapGet("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
 {
     var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
     var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
@@ -86,7 +106,7 @@ app.MapGet("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int fi
 })
 .WithName("GetFilm");
 
-app.MapPost("/film", (IHttpClientFactory httpClientFactory, FilmCreation filmCreation) =>
+group.MapPost("/film", (IHttpClientFactory httpClientFactory, FilmCreation filmCreation) =>
 {
     var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
 
@@ -96,14 +116,14 @@ app.MapPost("/film", (IHttpClientFactory httpClientFactory, FilmCreation filmCre
 })
 .WithName("RegisterFilm");
 
-app.MapDelete("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
+group.MapDelete("/film/{filmId}", async (IHttpClientFactory httpClientFactory, int filmId) =>
 {
     var filmsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.FilmsApiClient);
 
     return await filmsClient.DeleteAsync($"/film/{filmId}");
 });
 
-app.MapGet("/actors", (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/actors", (IHttpClientFactory httpClientFactory) =>
 {
     var actorsClient = httpClientFactory.CreateClient(FilmsManagerApiConstants.ActorsApiClient);
 
@@ -112,5 +132,14 @@ app.MapGet("/actors", (IHttpClientFactory httpClientFactory) =>
 .WithName("GetAllActors");
 
 app.MapDefaultEndpoints();
+
+app.UseOutputCache();
+
+app.MapStaticAssets();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(DotnetBarcelona.FilmsManager.WebUI.Client._Imports).Assembly);
 
 app.Run();

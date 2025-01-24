@@ -2,6 +2,7 @@ using DotnetBarcelona.Films.Shared;
 using DotnetBarcelona.Films.WebAPI.Infrastructure;
 using DotnetBarcelona.Films.WebAPI.Infrastructure.Migrations;
 using DotnetBarcelona.Films.WebAPI.Models;
+using DotnetBarcelona.FilmsManager.ServiceDefaults;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

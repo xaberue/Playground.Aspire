@@ -1,5 +1,4 @@
 ﻿using DotnetBarcelona.Actors.Shared;
-using DotnetBarcelona.Films.Shared;
 
 namespace DotnetBarcelona.FilmsManager.Shared;
 
