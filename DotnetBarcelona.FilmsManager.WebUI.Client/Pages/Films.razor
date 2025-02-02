@@ -27,7 +27,7 @@ else
     <FluentDataGrid Id="filmsgrid" Items="@films.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="FilmGridDto" Pagination="@pagination">
         <PropertyColumn Title="Name" Property="@(c => c!.Name)" Sortable="true" Align="Align.Start" />
         <PropertyColumn Title="Categories" Property="@(c => string.Join(", ", c.Categories))" Sortable="true" Align="Align.Start" />
-        <PropertyColumn Title="Categories" Property="@(c => string.Join(", ", c.Cast))" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Cast" Property="@(c => string.Join(", ", c.Cast))" Sortable="true" Align="Align.Start" />
         <PropertyColumn Title="Release Year" Property="@(c => c!.YearReleased)" Sortable="true" Align="Align.End" />
         <TemplateColumn Title="Actions" Align="@Align.End">
             <FluentButton aria-label="View Details" IconEnd="@(new Icons.Regular.Size16.Eye())" OnClick="@(() => OnFilmView(context))" />
