@@ -12,14 +12,12 @@
 		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.Shared\DotnetBarcelona.FilmsManager.Shared.csproj" />
 		<ProjectReference Include="..\DotnetBarcelona.FilmsManager.WebUI.Client\DotnetBarcelona.FilmsManager.WebUI.Client.csproj" />
 
-		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="9.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.3" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.3" />
-		<PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.69.0">
+		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Grpc.Net.Client" />
+		<PackageReference Include="Grpc.Tools" >
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
