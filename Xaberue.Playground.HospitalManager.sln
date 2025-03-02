@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doctors", "Doctors", "{4922
 		Backend\Doctors\SQL_Script_Doctors.sql = Backend\Doctors\SQL_Script_Doctors.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appointments", "Appointments", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.Appointments.WebAPI", "Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.WebAPI\Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj", "{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,10 @@ Global
 		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +91,8 @@ Global
 		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21} = {5B591647-F093-4E59-9804-557D79C6FC11}
 		{751AC6A9-B0DF-4854-A1CC-602AA0B0AF59} = {DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}
 		{4922F962-63D9-46FC-AE00-24AF5BF9415F} = {DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}
+		{6B89CA5C-1A80-2385-CF0A-5C62A65A39D4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2E47F13-184A-41E2-B6A5-57DBE52BE903}

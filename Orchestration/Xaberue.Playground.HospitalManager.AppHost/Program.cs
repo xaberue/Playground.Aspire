@@ -14,10 +14,13 @@ var doctorsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_
     .WithReference(doctorsDb)
     .WaitFor(doctorsDb);
 
+builder.AddProject<Projects.Xaberue_Playground_HospitalManager_Appointments_WebAPI>("appointments-webapi");
+
 builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("webui")
     .WithReference(cache)
     .WaitFor(cache)
     .WithEnvironment("ConnectionStrings__PatientsApiUrl", patientsApi.GetEndpoint("https"))
     .WithEnvironment("ConnectionStrings__DoctorsApiUrl", doctorsApi.GetEndpoint("https"));
+
 
 builder.Build().Run();
