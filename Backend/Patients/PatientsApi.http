@@ -1,0 +1,6 @@
+@Patients.WebAPI_HostAddress = https://localhost:7169
+
+GET {{Patients.WebAPI_HostAddress}}/patient/P087
+Accept: application/json
+
+###

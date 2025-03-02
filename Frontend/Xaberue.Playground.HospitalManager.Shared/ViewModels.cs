@@ -1,5 +1,3 @@
-﻿namespace DotnetBarcelona.FilmsManager.Shared;
+﻿namespace Xaberue.Playground.HospitalManager.Shared;
 
-//public record FilmGridDto(int Id, string Name, int YearReleased, string[] Categories, string[] Cast);
-
-//public record FilmDetailDto(int Id, string Name, int YearReleased, string[] Categories, IEnumerable<ActorDto> Cast);
+public record DoctorGridViewModel(int Id, string FullName, DateTime HiringDate);

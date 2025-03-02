@@ -18,6 +18,7 @@ namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure.Migra
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HiringDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

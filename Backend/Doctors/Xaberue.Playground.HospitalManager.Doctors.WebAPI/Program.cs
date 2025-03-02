@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure;
+using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Models;
 using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Services;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
 
@@ -28,5 +30,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGrpcService<DoctorsGrpcService>();
+
+app.MapGet("/doctors", (DoctorsDbContext db) =>
+{
+    var doctors = db.Doctors
+        .Select(f => f.ToDto())
+        .AsAsyncEnumerable();
+
+    return Results.Ok(doctors);
+});
 
 app.Run();

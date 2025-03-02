@@ -9,7 +9,7 @@ service Patients {
 }
 
 
-message PatientDto {
+message PatientModel {
 	int32 id = 1;
 	string code = 2;
 	string full_name = 3;
@@ -22,5 +22,5 @@ message GetPatientRequest{
 }
 
 message GetPatientResponse{
-    PatientDto patient = 1;
+    PatientModel patient = 1;
 }

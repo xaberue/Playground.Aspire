@@ -18,7 +18,7 @@ public class DoctorsGrpcService : Doctors.DoctorsBase
 
     public override Task<GetAllDoctorsResponse> GetAll(GetAllDoctorsRequest request, ServerCallContext context)
     {
-        var doctors = _doctorsDbContext.Doctors.Select(x => x.ToDto()).ToList();
+        var doctors = _doctorsDbContext.Doctors.Select(x => x.ToGrpcModel()).ToList();
         var response = new GetAllDoctorsResponse();
 
         response.Doctors.AddRange(doctors);

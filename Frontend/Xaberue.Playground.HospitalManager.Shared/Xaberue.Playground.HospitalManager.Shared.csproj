@@ -6,4 +6,9 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.Shared\Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
+		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.Shared\Xaberue.Playground.HospitalManager.Patients.Shared.csproj" />
+	</ItemGroup>
+
 </Project>

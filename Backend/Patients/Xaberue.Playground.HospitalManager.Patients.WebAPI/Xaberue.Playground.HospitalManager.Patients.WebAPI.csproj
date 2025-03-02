@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.Patients.Shared\Xaberue.Playground.HospitalManager.Patients.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

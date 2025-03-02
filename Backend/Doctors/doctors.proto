@@ -9,13 +9,15 @@ service Doctors {
 }
 
 
-message DoctorDto {
+message DoctorModel {
 	int32 id = 1;
 	string name = 2;
+	string surname = 3;
+	string hiring_date = 4;
 }
 
 message GetAllDoctorsRequest{ }
 
 message GetAllDoctorsResponse{
-    repeated DoctorDto doctors = 1;
+    repeated DoctorModel doctors = 1;
 }

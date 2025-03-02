@@ -23,7 +23,7 @@ public class PatientsGrpcService : Patients.PatientsBase
                     throw new RpcException(new Status(StatusCode.NotFound, $"Patient with code {request.Code} not found"));
         var response = new GetPatientResponse();
 
-        response.Patient = patient.ToDto();
+        response.Patient = patient.ToGrpcModel();
 
         return response;
     }

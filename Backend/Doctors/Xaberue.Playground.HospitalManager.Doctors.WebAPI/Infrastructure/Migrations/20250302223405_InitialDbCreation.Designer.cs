@@ -12,7 +12,7 @@ using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure;
 namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(DoctorsDbContext))]
-    [Migration("20250301213122_InitialDbCreation")]
+    [Migration("20250302223405_InitialDbCreation")]
     partial class InitialDbCreation
     {
         /// <inheritdoc />
@@ -37,6 +37,10 @@ namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure.Migra
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

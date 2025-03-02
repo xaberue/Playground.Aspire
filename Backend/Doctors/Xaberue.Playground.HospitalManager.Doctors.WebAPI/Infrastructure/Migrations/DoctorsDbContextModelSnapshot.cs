@@ -37,6 +37,10 @@ namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure.Migra
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Doctors");
