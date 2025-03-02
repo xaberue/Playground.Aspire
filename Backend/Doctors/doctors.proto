@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Xaberue.Playground.HospitalManager.Doctors";
+
+package doctorsgrpc;
+
+service Doctors {
+    rpc GetAll(GetAllDoctorsRequest) returns (GetAllDoctorsResponse);
+}
+
+
+message DoctorDto {
+	int32 id = 1;
+	string name = 2;
+}
+
+message GetAllDoctorsRequest{ }
+
+message GetAllDoctorsResponse{
+    repeated DoctorDto doctors = 1;
+}

@@ -1,0 +1,73 @@
+﻿@page "/doctors"
+
+<h1>Doctors</h1>
+
+@* @using DotnetBarcelona.Films.Shared
+@using DotnetBarcelona.FilmsManager.Shared
+@using DotnetBarcelona.FilmsManager.WebUI.Client.Services
+@using Xaberue.Playground.HospitalManager.WebUI.Client.Services
+
+
+@inject DoctorsApiService FilmsApiService
+@inject NavigationManager Navigation
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+
+<PageTitle>Films</PageTitle>
+
+<h1>Films</h1>
+
+<p>These are all the films that are within the system.</p>
+
+@if (films is null)
+{
+    <FluentProgressRing></FluentProgressRing>
+}
+else
+{
+    <FluentDataGrid Id="filmsgrid" Items="@films.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="FilmGridDto" Pagination="@pagination">
+        <PropertyColumn Title="Name" Property="@(c => c!.Name)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Categories" Property="@(c => string.Join(", ", c.Categories))" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Cast" Property="@(c => string.Join(", ", c.Cast))" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Release Year" Property="@(c => c!.YearReleased)" Sortable="true" Align="Align.End" />
+        <TemplateColumn Title="Actions" Align="@Align.End">
+            <FluentButton aria-label="View Details" IconEnd="@(new Icons.Regular.Size16.Eye())" OnClick="@(() => OnFilmView(context))" />
+            <FluentButton aria-label="Delete Film" IconEnd="@(new Icons.Regular.Size16.Delete())" OnClick="@(() => OnFilmRemoveAsync(context))" />
+        </TemplateColumn>
+    </FluentDataGrid>
+
+    <FluentPaginator State="@pagination" />
+
+    <FluentStack HorizontalAlignment="HorizontalAlignment.Left" Class="actions-container">
+        <FluentButton IconStart="@(new Icons.Regular.Size16.Add())" Appearance="Appearance.Accent" OnClick="OnRegisterFilm">Register Film</FluentButton>
+    </FluentStack>
+}
+
+@code {
+
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    private IEnumerable<FilmGridDto>? films;
+
+    protected override async Task OnInitializedAsync()
+    {
+        films = await FilmsApiService.GetAllAsync();
+    }
+
+    private void OnFilmView(FilmGridDto filmDto)
+    {
+        Navigation.NavigateTo($"/film-detail/{filmDto.Id}");
+    }
+
+    private void OnRegisterFilm()
+    {
+        Navigation.NavigateTo("/film-register");
+    }
+
+    private async Task OnFilmRemoveAsync(FilmGridDto filmDto)
+    {
+        await FilmsApiService.RemoveAsync(filmDto.Id);
+        films = await FilmsApiService.GetAllAsync();
+    }
+}
+ *@

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>de0421e2-5b5f-4724-b074-75178c9e45d0</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.WebAPI\Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
+
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.SqlServer" />
+		<PackageReference Include="Aspire.Hosting.Redis" />
+	</ItemGroup>
+
+</Project>

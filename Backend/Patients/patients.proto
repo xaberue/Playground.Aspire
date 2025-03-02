@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "Xaberue.Playground.HospitalManager.Patients";
+
+package patientsgrpc;
+
+service Patients {
+    rpc Get(GetPatientRequest) returns (GetPatientResponse);
+}
+
+
+message PatientDto {
+	int32 id = 1;
+	string code = 2;
+	string full_name = 3;
+	string date_of_birth = 4;
+	string nationality = 5;
+}
+
+message GetPatientRequest{
+    string code = 1;
+}
+
+message GetPatientResponse{
+    PatientDto patient = 1;
+}

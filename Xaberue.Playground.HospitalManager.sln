@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.Patients.WebAPI", "Backend\Patients\Xaberue.Playground.HospitalManager.Patients.WebAPI\Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj", "{69EC0B51-FA27-4367-A264-E2F0F3A049C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.Doctors.WebAPI", "Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj", "{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.AppHost", "Orchestration\Xaberue.Playground.HospitalManager.AppHost\Xaberue.Playground.HospitalManager.AppHost.csproj", "{C1564DFF-0354-45E5-B191-0036AADA5947}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.ServiceDefaults", "Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj", "{523525C7-448D-4193-8FC3-AED6D03CD564}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.WebUI.Server", "Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj", "{B556E2E9-4E7B-483E-B83F-C9B2501187A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.WebUI.Client", "Frontend\Xaberue.Playground.HospitalManager.WebUI.Client\Xaberue.Playground.HospitalManager.WebUI.Client.csproj", "{1FA51283-71AE-44E6-8A5A-16C3442FDD3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaberue.Playground.HospitalManager.Shared", "Frontend\Xaberue.Playground.HospitalManager.Shared\Xaberue.Playground.HospitalManager.Shared.csproj", "{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Orchestration", "1. Orchestration", "{0F4AD921-D729-490B-BE50-1B2BDEE6AED7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Frontend", "2. Frontend", "{5B591647-F093-4E59-9804-557D79C6FC11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Backend", "3. Backend", "{DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Patients", "Patients", "{751AC6A9-B0DF-4854-A1CC-602AA0B0AF59}"
+	ProjectSection(SolutionItems) = preProject
+		Backend\Patients\patients.proto = Backend\Patients\patients.proto
+		Backend\Patients\SQL_Script_Patients.sql = Backend\Patients\SQL_Script_Patients.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doctors", "Doctors", "{4922F962-63D9-46FC-AE00-24AF5BF9415F}"
+	ProjectSection(SolutionItems) = preProject
+		Backend\Doctors\doctors.proto = Backend\Doctors\doctors.proto
+		Backend\Doctors\SQL_Script_Doctors.sql = Backend\Doctors\SQL_Script_Doctors.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69EC0B51-FA27-4367-A264-E2F0F3A049C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69EC0B51-FA27-4367-A264-E2F0F3A049C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69EC0B51-FA27-4367-A264-E2F0F3A049C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69EC0B51-FA27-4367-A264-E2F0F3A049C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1564DFF-0354-45E5-B191-0036AADA5947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1564DFF-0354-45E5-B191-0036AADA5947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1564DFF-0354-45E5-B191-0036AADA5947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1564DFF-0354-45E5-B191-0036AADA5947}.Release|Any CPU.Build.0 = Release|Any CPU
+		{523525C7-448D-4193-8FC3-AED6D03CD564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{523525C7-448D-4193-8FC3-AED6D03CD564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{523525C7-448D-4193-8FC3-AED6D03CD564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{523525C7-448D-4193-8FC3-AED6D03CD564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B556E2E9-4E7B-483E-B83F-C9B2501187A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B556E2E9-4E7B-483E-B83F-C9B2501187A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B556E2E9-4E7B-483E-B83F-C9B2501187A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B556E2E9-4E7B-483E-B83F-C9B2501187A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FA51283-71AE-44E6-8A5A-16C3442FDD3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA51283-71AE-44E6-8A5A-16C3442FDD3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FA51283-71AE-44E6-8A5A-16C3442FDD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FA51283-71AE-44E6-8A5A-16C3442FDD3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{69EC0B51-FA27-4367-A264-E2F0F3A049C3} = {751AC6A9-B0DF-4854-A1CC-602AA0B0AF59}
+		{B7D371EC-2D9E-4D8F-B1B0-F4E1C0FCF138} = {4922F962-63D9-46FC-AE00-24AF5BF9415F}
+		{C1564DFF-0354-45E5-B191-0036AADA5947} = {0F4AD921-D729-490B-BE50-1B2BDEE6AED7}
+		{523525C7-448D-4193-8FC3-AED6D03CD564} = {0F4AD921-D729-490B-BE50-1B2BDEE6AED7}
+		{B556E2E9-4E7B-483E-B83F-C9B2501187A2} = {5B591647-F093-4E59-9804-557D79C6FC11}
+		{1FA51283-71AE-44E6-8A5A-16C3442FDD3B} = {5B591647-F093-4E59-9804-557D79C6FC11}
+		{10450331-2B4D-4CEF-AD26-B0CABDDC2F21} = {5B591647-F093-4E59-9804-557D79C6FC11}
+		{751AC6A9-B0DF-4854-A1CC-602AA0B0AF59} = {DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}
+		{4922F962-63D9-46FC-AE00-24AF5BF9415F} = {DBDE4EB3-F523-4EC3-B7FF-BE306A542F1A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2E47F13-184A-41E2-B6A5-57DBE52BE903}
+	EndGlobalSection
+EndGlobal
