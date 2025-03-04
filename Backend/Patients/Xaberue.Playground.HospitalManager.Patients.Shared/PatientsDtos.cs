@@ -1,3 +1,3 @@
 ﻿namespace Xaberue.Playground.HospitalManager.Patients.Shared;
 
-public record PatientDto(int Id, string Code, string FullName, DateTime DateOfBirth, string Nationality);
+public record PatientDto(int Id, string Code, string Name, string Surname, DateTime DateOfBirth, string Nationality);

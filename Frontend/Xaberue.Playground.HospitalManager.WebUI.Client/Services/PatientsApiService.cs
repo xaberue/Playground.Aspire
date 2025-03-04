@@ -1,12 +1,15 @@
+using System.Net.Http.Json;
+using Xaberue.Playground.HospitalManager.Shared;
+
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
 public class PatientsApiService(HttpClient patientsHttpClient)
 {
 
-    //public async Task<IEnumerable<ActorDto>> GetAllActorsAsync(CancellationToken cancellationToken = default)
-    //{
-    //    var actors = await actorsHttpClient.GetFromJsonAsync<IEnumerable<ActorDto>>("/api/actors", cancellationToken);
+    public async Task<IEnumerable<PatientGridViewModel>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var patients = await patientsHttpClient.GetFromJsonAsync<IEnumerable<PatientGridViewModel>>("/api/patients", cancellationToken);
 
-    //    return actors!;
-    //}
+        return patients!;
+    }
 }

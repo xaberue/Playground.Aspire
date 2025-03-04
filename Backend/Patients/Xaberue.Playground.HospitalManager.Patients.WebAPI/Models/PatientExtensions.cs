@@ -4,12 +4,13 @@ namespace Xaberue.Playground.HospitalManager.Patients.WebAPI.Models;
 
 public static class PatientExtensions
 {
-    public static PatientDto ToDtol(this Patient entity)
+    public static PatientDto ToDto(this Patient entity)
         => new
         (
             entity.Id,
             entity.Code,
-            $"{entity.Name} {entity.Surname}",
+            entity.Name,
+            entity.Surname,
             entity.DateOfBirth,
             entity.Nationality
         );
@@ -19,7 +20,8 @@ public static class PatientExtensions
         {
             Id = entity.Id,
             Code = entity.Code,
-            FullName = $"{entity.Name} {entity.Surname}",
+            Name = entity.Name,
+            Surname = entity.Surname,
             DateOfBirth = entity.DateOfBirth.ToString(),
             Nationality = entity.Nationality
         };

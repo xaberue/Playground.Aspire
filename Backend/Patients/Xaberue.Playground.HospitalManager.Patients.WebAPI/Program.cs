@@ -39,7 +39,16 @@ app.MapGet("/patient/{code}", async (PatientsDbContext db, string code) =>
         return Results.NotFound();
     }
 
-    return Results.Ok(patient.ToDtol());
+    return Results.Ok(patient.ToDto());
+});
+
+app.MapGet("/patients", (PatientsDbContext db) =>
+{
+    var patients = db.Patients
+        .Select(f => f.ToDto())
+        .AsAsyncEnumerable();
+
+    return Results.Ok(patients);
 });
 
 app.Run();

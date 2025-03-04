@@ -7,18 +7,18 @@ namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Services;
 public class DoctorsGrpcService : Doctors.DoctorsBase
 {
 
-    private readonly DoctorsDbContext _doctorsDbContext;
+    private readonly DoctorsDbContext _dbContext;
 
 
-    public DoctorsGrpcService(DoctorsDbContext doctorsDbContext)
+    public DoctorsGrpcService(DoctorsDbContext dbContext)
     {
-        _doctorsDbContext = doctorsDbContext;
+        _dbContext = dbContext;
     }
 
 
     public override Task<GetAllDoctorsResponse> GetAll(GetAllDoctorsRequest request, ServerCallContext context)
     {
-        var doctors = _doctorsDbContext.Doctors.Select(x => x.ToGrpcModel()).ToList();
+        var doctors = _dbContext.Doctors.Select(x => x.ToGrpcModel()).ToList();
         var response = new GetAllDoctorsResponse();
 
         response.Doctors.AddRange(doctors);

@@ -7,9 +7,9 @@ public class DoctorsApiService(HttpClient doctorsHttpClient)
 {
     public async Task<IEnumerable<DoctorGridViewModel>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var films = await doctorsHttpClient.GetFromJsonAsync<IEnumerable<DoctorGridViewModel>>("/api/doctors", cancellationToken);
+        var doctors = await doctorsHttpClient.GetFromJsonAsync<IEnumerable<DoctorGridViewModel>>("/api/doctors", cancellationToken);
 
-        return films!;
+        return doctors!;
     }
 
 }

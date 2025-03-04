@@ -2,6 +2,8 @@ using Grpc.Net.Client;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Xaberue.Playground.HospitalManager.Doctors;
 using Xaberue.Playground.HospitalManager.Doctors.Shared;
+using Xaberue.Playground.HospitalManager.Patients;
+using Xaberue.Playground.HospitalManager.Patients.Shared;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
 using Xaberue.Playground.HospitalManager.Shared;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components;
@@ -90,7 +92,38 @@ group.MapGet("/doctors", async (IHttpClientFactory httpClientFactory) =>
            ));
     }
 })
-.WithName("GetAllFilms");
+.WithName("GetAllDoctors");
+
+group.MapGet("/patients", async (IHttpClientFactory httpClientFactory) =>
+{
+    if (grpcEnabled)
+    {
+        using var patientsChannel = GrpcChannel.ForAddress(patientsApiUrl);
+
+        var patientsClient = new Patients.PatientsClient(patientsChannel);
+        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
+
+        return response.Patients.Select(x => new PatientGridViewModel(
+                x.Id,
+                x.Code,
+                $"{x.Name} {x.Surname}",
+                DateTime.Parse(x.DateOfBirth)
+            ));
+    }
+    else
+    {
+        var patientsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
+        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
+
+        return patients.Select(x => new PatientGridViewModel(
+                x.Id,
+                x.Code,
+                $"{x.Name} {x.Surname}",
+                x.DateOfBirth
+           ));
+    }
+})
+.WithName("GetAllPatients");
 
 app.MapDefaultEndpoints();
 
