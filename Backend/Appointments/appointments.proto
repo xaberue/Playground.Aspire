@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "Xaberue.Playground.HospitalManager.Appointments";
+
+package appointmentsgrpc;
+
+service Appointments {
+    rpc GetAll(GetAllAppointmentsRequest) returns (GetAllAppointmentsResponse);
+    rpc Create(CreateAppointmentRequest) returns (CreateAppointmentResponse);
+}
+
+
+message AppointmentModel {
+	string id = 1;
+	int32 patientId = 2;
+	int32 doctorId = 3;
+	string date = 4;
+	string notes = 5;
+}
+
+message GetAllAppointmentsRequest{ }
+
+message GetAllAppointmentsResponse{
+    repeated AppointmentModel appointments = 1;
+}
+
+message CreateAppointmentRequest{ 
+	int32 patientId = 1;
+	int32 doctorId = 2;
+	string notes = 3;
+}
+
+message CreateAppointmentResponse{
+    AppointmentModel appointment = 1;
+}
+

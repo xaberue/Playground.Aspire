@@ -19,12 +19,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="..\doctors.proto" GrpcServices="Server" />
+		<ProjectReference Include="..\..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.Doctors.Shared\Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
-		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.Doctors.Shared\Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
+		<Protobuf Include="..\doctors.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>

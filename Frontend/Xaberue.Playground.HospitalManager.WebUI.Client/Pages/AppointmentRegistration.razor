@@ -1,0 +1,68 @@
+﻿@page "/appointment-registration"
+
+@using Xaberue.Playground.HospitalManager.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Client.Services
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+
+<FluentCard Width="300px" Height="300px">
+    <EditForm Model="@creationModel" OnValidSubmit="HandleOnValidSubmit" FormName="appointmentCreationForm">
+        <DataAnnotationsValidator />
+        <FluentValidationSummary />
+
+        <FluentStack Orientation="Orientation.Horizontal">
+            <div>
+                <FluentAutocomplete TOption="DoctorSelectionViewModel"
+                Name="doctors"
+                AutoComplete="on"
+                Required
+                Label="Select doctor"
+                Width="250px"
+                Placeholder="Select doctor"
+                OnOptionsSearch="@OnSearchDoctorAsync"
+                MaximumSelectedOptions="3"
+                OptionText="@(item => item.FullName)"
+                Multiple="true"
+                @bind-SelectedOption="@creationModel.Doctor" />
+                <FluentValidationMessage For="@(() => creationModel.Doctor)" />
+            </div>
+        </FluentStack>
+    </EditForm>
+</FluentCard>
+
+
+@code {
+    IEnumerable<DoctorSelectionViewModel> doctors = Enumerable.Empty<DoctorSelectionViewModel>();
+
+    AppointmentCreationViewModel creationModel = new AppointmentCreationViewModel();
+
+    [Inject]
+    public DoctorsApiService DoctorsApiService { get; set; } = null!;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //TODO: It doesn't work because the render mode, currently is just working as a static page
+        doctors = await DoctorsApiService.GetAllSelectionModelsAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+
+    private async Task OnSearchDoctorAsync(OptionsSearchEventArgs<DoctorSelectionViewModel> searchEvent)
+    {
+        // var allCountries = await Data.GetCountriesAsync();
+        // e.Items = allCountries.Where(i => i.Name.StartsWith(e.Text, StringComparison.OrdinalIgnoreCease))
+        //                       .OrderBy(i => i.Name);
+
+    }
+
+    private void HandleOnValidSubmit()
+    {
+
+    }
+}

@@ -31,6 +31,7 @@ else
     <FluentPaginator State="@pagination" />
 }
 
+
 @code {
 
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
@@ -38,7 +39,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        doctors = await DoctorsApiService.GetAllAsync();
+        doctors = await DoctorsApiService.GetAllGridModelsAsync();
     }
 
 }

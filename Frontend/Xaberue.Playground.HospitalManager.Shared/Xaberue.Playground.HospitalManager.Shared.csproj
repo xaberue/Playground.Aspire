@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.Shared\Xaberue.Playground.HospitalManager.Appointments.Shared.csproj" />
 		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.Shared\Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
 		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.Shared\Xaberue.Playground.HospitalManager.Patients.Shared.csproj" />
 	</ItemGroup>

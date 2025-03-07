@@ -65,7 +65,7 @@ app.UseAntiforgery();
 
 var group = app.MapGroup("/api");
 
-group.MapGet("/doctors", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/doctors/grid", async (IHttpClientFactory httpClientFactory) =>
 {
     if (grpcEnabled)
     {
@@ -92,9 +92,36 @@ group.MapGet("/doctors", async (IHttpClientFactory httpClientFactory) =>
            ));
     }
 })
-.WithName("GetAllDoctors");
+.WithName("GetAllDoctorGridModels");
 
-group.MapGet("/patients", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/doctors/selection", async (IHttpClientFactory httpClientFactory) =>
+{
+    if (grpcEnabled)
+    {
+        using var doctorsChannel = GrpcChannel.ForAddress(doctorsApiUrl);
+
+        var doctorsClient = new Doctors.DoctorsClient(doctorsChannel);
+        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest());
+
+        return response.Doctors.Select(x => new DoctorSelectionViewModel(
+                x.Id,
+                $"{x.Name} {x.Surname}"
+            ));
+    }
+    else
+    {
+        var doctorsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
+        var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors") ?? [];
+
+        return doctors.Select(x => new DoctorSelectionViewModel(
+               x.Id,
+               $"{x.Name} {x.Surname}"
+           ));
+    }
+})
+.WithName("GetAllDoctorSelectionModels");
+
+group.MapGet("/patients/grid", async (IHttpClientFactory httpClientFactory) =>
 {
     if (grpcEnabled)
     {
@@ -123,7 +150,36 @@ group.MapGet("/patients", async (IHttpClientFactory httpClientFactory) =>
            ));
     }
 })
-.WithName("GetAllPatients");
+.WithName("GetAllPatientGridModels");
+
+group.MapGet("/patients/selection", async (IHttpClientFactory httpClientFactory) =>
+{
+    if (grpcEnabled)
+    {
+        using var patientsChannel = GrpcChannel.ForAddress(patientsApiUrl);
+
+        var patientsClient = new Patients.PatientsClient(patientsChannel);
+        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
+
+        return response.Patients.Select(x => new PatientSelectionViewModel(
+                x.Id,
+                x.Code,
+                $"{x.Name} {x.Surname}"
+            ));
+    }
+    else
+    {
+        var patientsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
+        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
+
+        return patients.Select(x => new PatientSelectionViewModel(
+                x.Id,
+                x.Code,
+                $"{x.Name} {x.Surname}"
+           ));
+    }
+})
+.WithName("GetAllPatientSelectionModels");
 
 app.MapDefaultEndpoints();
 

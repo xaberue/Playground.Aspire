@@ -1,0 +1,18 @@
+@Appointments.WebAPI_HostAddress = https://localhost:7113
+
+
+GET {{Appointments.WebAPI_HostAddress}}/appointments
+Accept: application/json
+
+###
+
+
+POST {{Appointments.WebAPI_HostAddress}}/appointment/
+Content-Type: application/json
+{
+  "patientId": 87,
+  "doctorId": 2,
+  "notes": "Patient with fever and cough"
+}
+
+###
