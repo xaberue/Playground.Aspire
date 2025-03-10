@@ -1,13 +1,13 @@
 ﻿@page "/doctors"
+@rendermode InteractiveAuto
 
 @using Xaberue.Playground.HospitalManager.WebUI.Client.Services
-@using Xaberue.Playground.HospitalManager.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
 
-
-@inject DoctorsApiService DoctorsApiService
+@inject IDoctorService DoctorsApiService
 @inject NavigationManager Navigation
-
-@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 
 <PageTitle>Doctors</PageTitle>

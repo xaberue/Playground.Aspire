@@ -1,9 +1,10 @@
 using System.Net.Http.Json;
-using Xaberue.Playground.HospitalManager.Shared;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
-public class DoctorsApiService(HttpClient doctorsHttpClient)
+public class DoctorsApiService(HttpClient doctorsHttpClient) : IDoctorService
 {
     public async Task<IEnumerable<DoctorGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {
@@ -14,19 +15,9 @@ public class DoctorsApiService(HttpClient doctorsHttpClient)
 
     public async Task<IEnumerable<DoctorSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
-        try
-        {
+        var doctors = await doctorsHttpClient.GetFromJsonAsync<IEnumerable<DoctorSelectionViewModel>>("/api/doctors/selection", cancellationToken);
 
-            var doctors = await doctorsHttpClient.GetFromJsonAsync<IEnumerable<DoctorSelectionViewModel>>("/api/doctors/selection", cancellationToken);
-
-            return doctors!;
-
-        }
-        catch (Exception ex)
-        {
-
-            throw;
-        }
+        return doctors!;
     }
 
 }

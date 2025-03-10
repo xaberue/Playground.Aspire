@@ -1,17 +1,22 @@
-using Grpc.Net.Client;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Xaberue.Playground.HospitalManager.Doctors;
-using Xaberue.Playground.HospitalManager.Doctors.Shared;
-using Xaberue.Playground.HospitalManager.Patients;
-using Xaberue.Playground.HospitalManager.Patients.Shared;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
-using Xaberue.Playground.HospitalManager.Shared;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Components.Account;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Data;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
+var patientsApiUrl = builder.Configuration.GetConnectionString("PatientsAPIUrl")
+    ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
+var doctorsApiUrl = builder.Configuration.GetConnectionString("DoctorsApiUrl")
+    ?? throw new ArgumentException("DoctorsApiUrl is mandatory");
 
 builder.AddServiceDefaults();
 builder.AddRedisOutputCache("cache");
@@ -22,15 +27,29 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
-
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
 builder.Services.AddFluentUIComponents();
 
-var patientsApiUrl = builder.Configuration.GetConnectionString("PatientsAPIUrl")
-    ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-var doctorsApiUrl = builder.Configuration.GetConnectionString("DoctorsApiUrl")
-    ?? throw new ArgumentException("DoctorsApiUrl is mandatory");
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+builder.AddSqlServerDbContext<ApplicationDbContext>("IdentityDb");
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddHttpClient(
     HospitalManagerApiConstants.PatientsApiClient,
@@ -46,11 +65,26 @@ builder.Services.AddHttpClient(
         client.BaseAddress = new Uri(doctorsApiUrl);
     });
 
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+if (grpcEnabled)
+{
+    builder.Services.AddScoped<IPatientService>(x => new PatientGrpcService(patientsApiUrl));
+    builder.Services.AddScoped<IDoctorService>(x => new DoctorGrpcService(doctorsApiUrl));
+}
+else
+{
+    builder.Services.AddScoped<IPatientService, PatientRestService>();
+    builder.Services.AddScoped<IDoctorService, DoctorRestService>();
+}
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.UseMigrationsEndPoint();
     app.MapOpenApi();
 }
 else
@@ -65,119 +99,35 @@ app.UseAntiforgery();
 
 var group = app.MapGroup("/api");
 
-group.MapGet("/doctors/grid", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/doctors/grid", async (IDoctorService doctorService) =>
 {
-    if (grpcEnabled)
-    {
-        using var doctorsChannel = GrpcChannel.ForAddress(doctorsApiUrl);
+    var data = await doctorService.GetAllGridModelsAsync();
 
-        var doctorsClient = new Doctors.DoctorsClient(doctorsChannel);
-        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest());
-
-        return response.Doctors.Select(x => new DoctorGridViewModel(
-                x.Id,
-                $"{x.Name} {x.Surname}",
-                DateTime.Parse(x.HiringDate)
-            ));
-    }
-    else
-    {
-        var doctorsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
-        var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors") ?? [];
-
-        return doctors.Select(x => new DoctorGridViewModel(
-               x.Id,
-               $"{x.Name} {x.Surname}",
-               x.HiringDate
-           ));
-    }
+    return data;
 })
 .WithName("GetAllDoctorGridModels");
 
-group.MapGet("/doctors/selection", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/doctors/selection", async (IDoctorService doctorService) =>
 {
-    if (grpcEnabled)
-    {
-        using var doctorsChannel = GrpcChannel.ForAddress(doctorsApiUrl);
+    var data = await doctorService.GetAllSelectionModelsAsync();
 
-        var doctorsClient = new Doctors.DoctorsClient(doctorsChannel);
-        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest());
-
-        return response.Doctors.Select(x => new DoctorSelectionViewModel(
-                x.Id,
-                $"{x.Name} {x.Surname}"
-            ));
-    }
-    else
-    {
-        var doctorsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
-        var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors") ?? [];
-
-        return doctors.Select(x => new DoctorSelectionViewModel(
-               x.Id,
-               $"{x.Name} {x.Surname}"
-           ));
-    }
+    return data;
 })
 .WithName("GetAllDoctorSelectionModels");
 
-group.MapGet("/patients/grid", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/patients/grid", async (IPatientService patientService) =>
 {
-    if (grpcEnabled)
-    {
-        using var patientsChannel = GrpcChannel.ForAddress(patientsApiUrl);
+    var data = await patientService.GetAllGridModelsAsync();
 
-        var patientsClient = new Patients.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
-
-        return response.Patients.Select(x => new PatientGridViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}",
-                DateTime.Parse(x.DateOfBirth)
-            ));
-    }
-    else
-    {
-        var patientsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
-        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
-
-        return patients.Select(x => new PatientGridViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}",
-                x.DateOfBirth
-           ));
-    }
+    return data;
 })
 .WithName("GetAllPatientGridModels");
 
-group.MapGet("/patients/selection", async (IHttpClientFactory httpClientFactory) =>
+group.MapGet("/patients/selection", async (IPatientService patientService) =>
 {
-    if (grpcEnabled)
-    {
-        using var patientsChannel = GrpcChannel.ForAddress(patientsApiUrl);
+    var data = await patientService.GetAllSelectionModelsAsync();
 
-        var patientsClient = new Patients.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
-
-        return response.Patients.Select(x => new PatientSelectionViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}"
-            ));
-    }
-    else
-    {
-        var patientsClient = httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
-        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
-
-        return patients.Select(x => new PatientSelectionViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}"
-           ));
-    }
+    return data;
 })
 .WithName("GetAllPatientSelectionModels");
 
@@ -186,10 +136,11 @@ app.MapDefaultEndpoints();
 app.UseOutputCache();
 
 app.MapStaticAssets();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Xaberue.Playground.HospitalManager.WebUI.Client._Imports).Assembly);
+
+app.MapAdditionalIdentityEndpoints();
 
 app.Run();

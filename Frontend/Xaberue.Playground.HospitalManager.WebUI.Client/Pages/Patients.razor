@@ -1,13 +1,13 @@
 ﻿@page "/patients"
+@rendermode InteractiveAuto
 
 @using Xaberue.Playground.HospitalManager.WebUI.Client.Services
-@using Xaberue.Playground.HospitalManager.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
 
-
-@inject PatientsApiService PatientsApiService
+@inject IPatientService PatientsApiService
 @inject NavigationManager Navigation
-
-@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 
 <PageTitle>Patients</PageTitle>
@@ -37,6 +37,7 @@ else
 
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
     private IEnumerable<PatientGridViewModel>? patients;
+
 
     protected override async Task OnInitializedAsync()
     {

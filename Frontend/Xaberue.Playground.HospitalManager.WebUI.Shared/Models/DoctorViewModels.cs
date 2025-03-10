@@ -1,4 +1,4 @@
-﻿namespace Xaberue.Playground.HospitalManager.Shared;
+﻿namespace Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 public record DoctorGridViewModel(int Id, string FullName, DateTime HiringDate);
 

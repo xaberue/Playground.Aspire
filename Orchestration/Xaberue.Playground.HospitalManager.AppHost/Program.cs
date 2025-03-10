@@ -8,6 +8,7 @@ var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 52099)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
+var identityDb = mssql.AddDatabase("IdentityDb");
 var patientsDb = mssql.AddDatabase("PatientsDb");
 var doctorsDb = mssql.AddDatabase("DoctorsDb");
 var appointmentsDb = mongodb.AddDatabase("AppointmentsDb");
@@ -25,8 +26,10 @@ builder.AddProject<Projects.Xaberue_Playground_HospitalManager_Appointments_WebA
     .WaitFor(appointmentsDb);
 
 builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("webui")
+    .WithReference(identityDb)
     .WithReference(cache)
     .WaitFor(cache)
+    .WaitFor(identityDb)
     .WithEnvironment("ConnectionStrings__PatientsApiUrl", patientsApi.GetEndpoint("https"))
     .WithEnvironment("ConnectionStrings__DoctorsApiUrl", doctorsApi.GetEndpoint("https"));
 

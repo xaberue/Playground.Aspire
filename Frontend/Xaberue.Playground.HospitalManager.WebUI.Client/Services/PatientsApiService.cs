@@ -1,9 +1,10 @@
 using System.Net.Http.Json;
-using Xaberue.Playground.HospitalManager.Shared;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
-public class PatientsApiService(HttpClient patientsHttpClient)
+public class PatientsApiService(HttpClient patientsHttpClient) : IPatientService
 {
 
     public async Task<IEnumerable<PatientGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)

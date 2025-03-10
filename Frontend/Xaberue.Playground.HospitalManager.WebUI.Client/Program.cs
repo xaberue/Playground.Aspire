@@ -1,16 +1,21 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Xaberue.Playground.HospitalManager.WebUI.Client.Services;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddFluentUIComponents();
 
-builder.Services.AddHttpClient<DoctorsApiService>(client =>
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthenticationStateDeserialization();
+
+builder.Services.AddHttpClient<IDoctorService, DoctorsApiService>(client =>
 {
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });
 
-builder.Services.AddHttpClient<PatientsApiService>(client =>
+builder.Services.AddHttpClient<IPatientService, PatientsApiService>(client =>
 {
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });

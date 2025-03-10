@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -9,10 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.Shared\Xaberue.Playground.HospitalManager.Shared.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.WebUI.Shared\Xaberue.Playground.HospitalManager.WebUI.Shared.csproj" />
 
 		<PackageReference Include="ChustaSoft.Common" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
 	</ItemGroup>
