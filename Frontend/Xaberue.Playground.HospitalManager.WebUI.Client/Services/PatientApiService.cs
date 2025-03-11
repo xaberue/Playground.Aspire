@@ -4,8 +4,15 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
-public class PatientsApiService(HttpClient patientsHttpClient) : IPatientService
+public class PatientApiService(HttpClient patientsHttpClient) : IPatientService
 {
+
+    public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
+    {
+        var patient = await patientsHttpClient.GetFromJsonAsync<PatientSelectionViewModel>($"/api/patients/{code}", cancellationToken);
+
+        return patient;
+    }
 
     public async Task<IEnumerable<PatientGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {

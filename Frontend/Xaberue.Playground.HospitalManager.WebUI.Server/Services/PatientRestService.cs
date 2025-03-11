@@ -30,6 +30,19 @@ public class PatientRestService : IPatientService
            ));
     }
 
+    public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
+    {
+        var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
+        var response = await patientsClient.GetFromJsonAsync<PatientDto>($"/patient/{code}");
+
+        return (response != null) ?
+            new PatientSelectionViewModel(
+                response.Id,
+                response.Code,
+                $"{response.Name} {response.Surname}")
+            : null;
+    }
+
     public async Task<IEnumerable<PatientSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
@@ -42,3 +55,5 @@ public class PatientRestService : IPatientService
            ));
     }
 }
+
+//TODO: Extract mappers

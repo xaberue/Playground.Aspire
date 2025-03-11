@@ -4,7 +4,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
-public class DoctorsApiService(HttpClient doctorsHttpClient) : IDoctorService
+public class DoctorApiService(HttpClient doctorsHttpClient) : IDoctorService
 {
     public async Task<IEnumerable<DoctorGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {

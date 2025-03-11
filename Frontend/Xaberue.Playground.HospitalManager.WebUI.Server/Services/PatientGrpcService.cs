@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
 using Xaberue.Playground.HospitalManager.Patients;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
@@ -33,6 +34,28 @@ public class PatientGrpcService : IPatientService
             ));
     }
 
+    public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
+    {
+        using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
+
+        var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
+        var request = new GetPatientRequest { Code = code };
+        try
+        {
+            var response = await patientsClient.GetAsync(request);
+
+            return new PatientSelectionViewModel(
+                    response.Patient.Id,
+                    response.Patient.Code,
+                    $"{response.Patient.Name} {response.Patient.Surname}"
+                );
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
+        {
+            return null;
+        }
+    }
+
     public async Task<IEnumerable<PatientSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
         using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
@@ -46,4 +69,7 @@ public class PatientGrpcService : IPatientService
                 $"{x.Name} {x.Surname}"
             ));
     }
+
 }
+
+//TODO: Extract mappers

@@ -77,6 +77,7 @@ else
     builder.Services.AddScoped<IPatientService, PatientRestService>();
     builder.Services.AddScoped<IDoctorService, DoctorRestService>();
 }
+builder.Services.AddScoped<IAppointmentService, AppointmentRabbitService>();
 
 
 var app = builder.Build();
@@ -130,6 +131,14 @@ group.MapGet("/patients/selection", async (IPatientService patientService) =>
     return data;
 })
 .WithName("GetAllPatientSelectionModels");
+
+group.MapGet("/appointments", async (IPatientService patientService) =>
+{
+    var data = await patientService.GetAllSelectionModelsAsync();
+
+    return data;
+})
+.WithName("CreateAppointment");
 
 app.MapDefaultEndpoints();
 

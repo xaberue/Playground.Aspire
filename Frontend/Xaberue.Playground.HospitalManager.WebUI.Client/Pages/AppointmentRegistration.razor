@@ -1,50 +1,81 @@
 ﻿@page "/appointment-registration"
+@rendermode InteractiveAuto
 
 @using Xaberue.Playground.HospitalManager.WebUI.Client.Services
 @using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
 @using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
 
-@rendermode InteractiveAuto
-
-
-<FluentCard Width="300px" Height="300px">
-    <EditForm Model="@creationModel" OnValidSubmit="HandleOnValidSubmit" FormName="appointmentCreationForm">
+@if (doctors != null)
+{
+    <EditForm Model="@creationModel" OnValidSubmit="HandleOnValidSubmitAsync" FormName="appointmentCreationForm">
         <DataAnnotationsValidator />
         <FluentValidationSummary />
 
-        <FluentStack Orientation="Orientation.Horizontal">
+        <FluentStack Orientation="Orientation.Vertical">
+
+            <div>
+                <FluentAutocomplete TOption="PatientSelectionViewModel"
+                                    Name="patients"
+                                    AutoComplete="on"
+                                    Label="Find the patient by its code"
+                                    Width="250px"
+                                    Placeholder="Introduce patient's code"
+                                    OnOptionsSearch="@OnSearchPatientAsync"
+                                    OptionText="@(item => item.FullName)"
+                                    Multiple="true"
+                                    MaximumSelectedOptions="1"
+                                    @bind-SelectedOptions="@creationModel.Patients" />
+                <FluentValidationMessage For="@(() => creationModel.Patients)" />
+            </div>
+
             <div>
                 <FluentAutocomplete TOption="DoctorSelectionViewModel"
-                Name="doctors"
-                AutoComplete="on"
-                Required
-                Label="Select doctor"
-                Width="250px"
-                Placeholder="Select doctor"
-                OnOptionsSearch="@OnSearchDoctorAsync"
-                MaximumSelectedOptions="3"
-                OptionText="@(item => item.FullName)"
-                Multiple="true"
-                @bind-SelectedOption="@creationModel.Doctor" />
-                <FluentValidationMessage For="@(() => creationModel.Doctor)" />
+                                    Name="doctors"
+                                    AutoComplete="on"
+                                    Label="Select doctor"
+                                    Width="250px"
+                                    Placeholder="Select doctor"
+                                    OnOptionsSearch="@OnSearchDoctor"
+                                    OptionText="@(item => item.FullName)"
+                                    Multiple="true"
+                                    MaximumSelectedOptions="1"
+                                    @bind-SelectedOptions="@creationModel.Doctors" />
+                <FluentValidationMessage For="@(() => creationModel.Doctors)" />
+            </div>
+
+            <div>
+                <FluentTextArea Name="description" Rows=5 Cols=60 @bind-Value="creationModel.Notes" Label="Reason for visit" Required />
+                <FluentValidationMessage For="@(() => creationModel.Notes)" />
+            </div>
+
+            <div>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
             </div>
         </FluentStack>
     </EditForm>
-</FluentCard>
+}
 
 
 @code {
+
     IEnumerable<DoctorSelectionViewModel> doctors = Enumerable.Empty<DoctorSelectionViewModel>();
 
     AppointmentCreationViewModel creationModel = new AppointmentCreationViewModel();
 
+
     [Inject]
-    public DoctorsApiService DoctorsApiService { get; set; } = null!;
+    public IDoctorService DoctorsApiService { get; set; } = null!;
+
+    [Inject]
+    public IPatientService PatientsApiService { get; set; } = null!;
+
+    [Inject]
+    public IAppointmentService AppointmentApiService { get; set; } = null!;
 
 
     protected override async Task OnInitializedAsync()
     {
-        //TODO: It doesn't work because the render mode, currently is just working as a static page
         doctors = await DoctorsApiService.GetAllSelectionModelsAsync();
     }
 
@@ -54,16 +85,27 @@
     }
 
 
-    private async Task OnSearchDoctorAsync(OptionsSearchEventArgs<DoctorSelectionViewModel> searchEvent)
+    private async Task OnSearchPatientAsync(OptionsSearchEventArgs<PatientSelectionViewModel> searchEvent)
     {
-        // var allCountries = await Data.GetCountriesAsync();
-        // e.Items = allCountries.Where(i => i.Name.StartsWith(e.Text, StringComparison.OrdinalIgnoreCease))
-        //                       .OrderBy(i => i.Name);
+        if (searchEvent.Text.Length >= 4)
+        {
+            var patient = await PatientsApiService.GetSelectionModelAsync(searchEvent.Text);
 
+            if (patient != null)
+                searchEvent.Items = [patient];
+        }
     }
 
-    private void HandleOnValidSubmit()
+    private void OnSearchDoctor(OptionsSearchEventArgs<DoctorSelectionViewModel> searchEvent)
     {
-
+        searchEvent.Items = doctors
+            .Where(i => i.FullName.Contains(searchEvent.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i.FullName);
     }
+
+    private async Task HandleOnValidSubmitAsync()
+    {
+        await AppointmentApiService.CreateAsync(creationModel);
+    }
+
 }
