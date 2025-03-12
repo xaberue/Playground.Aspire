@@ -12,6 +12,7 @@
 		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.WebUI.Shared\Xaberue.Playground.HospitalManager.WebUI.Shared.csproj" />
 
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Aspire.RabbitMQ.Client" />
 		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" />
 		<PackageReference Include="Google.Protobuf" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />

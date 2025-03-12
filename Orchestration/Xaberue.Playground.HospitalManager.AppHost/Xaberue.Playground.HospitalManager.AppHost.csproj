@@ -12,15 +12,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.MongoDB" />
 		<ProjectReference Include="..\..\Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.WebAPI\Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.WebAPI\Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
 
 		<PackageReference Include="Aspire.Hosting.AppHost" />
-		<PackageReference Include="Aspire.Hosting.SqlServer" />
+		<PackageReference Include="Aspire.Hosting.MongoDB" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 		<PackageReference Include="Aspire.Hosting.Redis" />
+		<PackageReference Include="Aspire.Hosting.SqlServer" />
 	</ItemGroup>
 
 </Project>

@@ -65,6 +65,8 @@ builder.Services.AddHttpClient(
         client.BaseAddress = new Uri(doctorsApiUrl);
     });
 
+builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
+
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 if (grpcEnabled)
@@ -123,6 +125,14 @@ group.MapGet("/patients/grid", async (IPatientService patientService) =>
     return data;
 })
 .WithName("GetAllPatientGridModels");
+
+group.MapGet("/patients/{code}", async (string code, IPatientService patientService) =>
+{
+    var data = await patientService.GetSelectionModelAsync(code);
+
+    return data;
+})
+.WithName("GetPatientSelectionModelByCode");
 
 group.MapGet("/patients/selection", async (IPatientService patientService) =>
 {
