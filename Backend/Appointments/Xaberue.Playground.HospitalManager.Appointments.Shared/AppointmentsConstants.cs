@@ -2,5 +2,5 @@
 
 public static class AppointmentsConstants
 {
-    public const string AppointmentCreated = "appointment_created";
+    public const string AppointmentRegistered = "appointment_registered";
 }

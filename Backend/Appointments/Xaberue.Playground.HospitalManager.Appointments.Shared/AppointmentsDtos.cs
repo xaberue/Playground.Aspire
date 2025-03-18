@@ -4,7 +4,7 @@ namespace Xaberue.Playground.HospitalManager.Appointments.Shared;
 
 public record AppointmentDto(string Id, int PatientId, int DoctorId, DateTime Date, string Notes);
 
-public record AppointmentCreationDto
+public record AppointmentRegistrationDto
 {
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "PatientId must be valid")]

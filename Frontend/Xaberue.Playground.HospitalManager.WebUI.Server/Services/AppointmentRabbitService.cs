@@ -19,21 +19,20 @@ public class AppointmentRabbitService : IAppointmentService
     }
 
 
-    public async Task CreateAsync(AppointmentCreationViewModel creationViewModel, CancellationToken cancellationToken = default)
+    public async Task RegisterAsync(AppointmentRegistrationViewModel registrationViewModel, CancellationToken cancellationToken = default)
     {
         using var channel = _connection.CreateModel();
-        channel.QueueDeclare(queue: AppointmentsConstants.AppointmentCreated, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-        var messageModel = new AppointmentCreationDto
+        var messageModel = new AppointmentRegistrationDto
         {
-            DoctorId = creationViewModel.Doctors.First().Id,
-            PatientId = creationViewModel.Patients.First().Id,
-            Notes = creationViewModel.Notes
+            DoctorId = registrationViewModel.Doctors.First().Id,
+            PatientId = registrationViewModel.Patients.First().Id,
+            Notes = registrationViewModel.Notes
         };
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
-        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentCreated, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentRegistered, basicProperties: null, body: body);
 
         await Task.CompletedTask;
     }

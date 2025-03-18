@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.MongoDB.Driver" />
+		<PackageReference Include="Aspire.RabbitMQ.Client" />
 		<PackageReference Include="Grpc.AspNetCore" />
 		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />

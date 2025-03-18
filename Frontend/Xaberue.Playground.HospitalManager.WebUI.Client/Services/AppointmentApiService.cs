@@ -6,8 +6,8 @@ namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
 public class AppointmentApiService(HttpClient appointmentsHttpClient) : IAppointmentService
 {
-    public async Task CreateAsync(AppointmentCreationViewModel creationViewModel, CancellationToken cancellationToken = default)
+    public async Task RegisterAsync(AppointmentRegistrationViewModel registrationViewModel, CancellationToken cancellationToken = default)
     {
-        await appointmentsHttpClient.PostAsJsonAsync("/api/appointments", creationViewModel, cancellationToken);
+        await appointmentsHttpClient.PostAsJsonAsync("/api/appointments", registrationViewModel, cancellationToken);
     }
 }

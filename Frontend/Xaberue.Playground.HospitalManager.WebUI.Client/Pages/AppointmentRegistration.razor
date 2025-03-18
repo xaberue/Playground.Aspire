@@ -6,6 +6,7 @@
 @using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
 @using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
 
+
 @if (doctors != null)
 {
     <EditForm Model="@creationModel" OnValidSubmit="HandleOnValidSubmitAsync" FormName="appointmentCreationForm">
@@ -16,31 +17,31 @@
 
             <div>
                 <FluentAutocomplete TOption="PatientSelectionViewModel"
-                                    Name="patients"
-                                    AutoComplete="off"
-                                    Label="Find the patient by its code"
-                                    Width="250px"
-                                    Placeholder="Introduce patient's code"
-                                    OnOptionsSearch="@OnSearchPatientAsync"
-                                    OptionText="@(item => item.FullName)"
-                                    Multiple="true"
-                                    MaximumSelectedOptions="1"
-                                    @bind-SelectedOptions="@creationModel.Patients" />
+                Name="patients"
+                AutoComplete="off"
+                Label="Find the patient by its code"
+                Width="250px"
+                Placeholder="Introduce patient's code"
+                OnOptionsSearch="@OnSearchPatientAsync"
+                OptionText="@(item => item.FullName)"
+                Multiple="true"
+                MaximumSelectedOptions="1"
+                @bind-SelectedOptions="@creationModel.Patients" />
                 <FluentValidationMessage For="@(() => creationModel.Patients)" />
             </div>
 
             <div>
                 <FluentAutocomplete TOption="DoctorSelectionViewModel"
-                                    Name="doctors"
-                                    AutoComplete="off"
-                                    Label="Select doctor"
-                                    Width="250px"
-                                    Placeholder="Select doctor"
-                                    OnOptionsSearch="@OnSearchDoctor"
-                                    OptionText="@(item => item.FullName)"
-                                    Multiple="true"
-                                    MaximumSelectedOptions="1"
-                                    @bind-SelectedOptions="@creationModel.Doctors" />
+                Name="doctors"
+                AutoComplete="off"
+                Label="Select doctor"
+                Width="250px"
+                Placeholder="Select doctor"
+                OnOptionsSearch="@OnSearchDoctor"
+                OptionText="@(item => item.FullName)"
+                Multiple="true"
+                MaximumSelectedOptions="1"
+                @bind-SelectedOptions="@creationModel.Doctors" />
                 <FluentValidationMessage For="@(() => creationModel.Doctors)" />
             </div>
 
@@ -61,8 +62,13 @@
 
     IEnumerable<DoctorSelectionViewModel> doctors = Enumerable.Empty<DoctorSelectionViewModel>();
 
-    AppointmentCreationViewModel creationModel = new AppointmentCreationViewModel();
+    AppointmentRegistrationViewModel creationModel = new AppointmentRegistrationViewModel();
 
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject]
+    public IToastService ToastService { get; set; } = null!;
 
     [Inject]
     public IDoctorService DoctorsApiService { get; set; } = null!;
@@ -105,7 +111,9 @@
 
     private async Task HandleOnValidSubmitAsync()
     {
-        await AppointmentApiService.CreateAsync(creationModel);
+        await AppointmentApiService.RegisterAsync(creationModel);
+        ToastService.ShowSuccess("Appointment successfully registered");
+        NavigationManager.NavigateTo("/");
     }
 
 }

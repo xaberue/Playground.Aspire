@@ -9,6 +9,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Data;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
+using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,11 +143,11 @@ group.MapGet("/patients/selection", async (IPatientService patientService) =>
 })
 .WithName("GetAllPatientSelectionModels");
 
-group.MapGet("/appointments", async (IPatientService patientService) =>
+group.MapPost("/appointments", async (IAppointmentService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
 {
-    var data = await patientService.GetAllSelectionModelsAsync();
+    await appointmentService.RegisterAsync(creationModel, cancellationToken);
 
-    return data;
+    return Results.Accepted();
 })
 .WithName("CreateAppointment");
 

@@ -2,7 +2,7 @@
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
-public record AppointmentCreationViewModel
+public record AppointmentRegistrationViewModel
 {
     [Required]
     public IEnumerable<PatientSelectionViewModel> Patients { get; set; } = Enumerable.Empty< PatientSelectionViewModel>();

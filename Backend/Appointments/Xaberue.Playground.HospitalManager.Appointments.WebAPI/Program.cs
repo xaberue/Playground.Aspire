@@ -14,6 +14,9 @@ builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
 
 builder.AddMongoDBClient(connectionName: "AppointmentsDb");
+builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
+
+builder.Services.AddHostedService<AppointmentRegisteredProcessor>();
 
 var app = builder.Build();
 
@@ -38,7 +41,7 @@ app.MapGet("/appointments", async (IMongoClient client) =>
     return Results.Ok(appointments);
 });
 
-app.MapPost("/appointment", async (IMongoClient client, AppointmentCreationDto appointmentCreation) =>
+app.MapPost("/appointment", async (IMongoClient client, AppointmentRegistrationDto appointmentCreation) =>
 {
     var db = client.GetDatabase("AppointmentsDb");
     var collection = db.GetCollection<Appointment>("Appointments");

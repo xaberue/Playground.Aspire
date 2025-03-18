@@ -9,6 +9,7 @@ var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 52099)
     .WithDataVolume();
 
 var rabbitmq = builder.AddRabbitMQ("HospitalManagerServiceBroker")
+    .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume(isReadOnly: false)
     .WithManagementPlugin(port: 15672);
 
@@ -27,6 +28,7 @@ var doctorsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_
 
 builder.AddProject<Projects.Xaberue_Playground_HospitalManager_Appointments_WebAPI>("appointments-webapi")
     .WithReference(appointmentsDb)
+    .WithReference(rabbitmq)
     .WaitFor(appointmentsDb);
 
 builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("webui")
