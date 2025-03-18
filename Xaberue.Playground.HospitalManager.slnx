@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/1. Orchestration/">
+    <Project Path="Orchestration/Xaberue.Playground.HospitalManager.AppHost/Xaberue.Playground.HospitalManager.AppHost.csproj" />
+    <Project Path="Orchestration/Xaberue.Playground.HospitalManager.ServiceDefaults/Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/2. Frontend/">
+    <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Client/Xaberue.Playground.HospitalManager.WebUI.Client.csproj" />
+    <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Server/Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
+    <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Shared/Xaberue.Playground.HospitalManager.WebUI.Shared.csproj" />
+  </Folder>
+  <Folder Name="/3. Backend/" />
+  <Folder Name="/3. Backend/Appointments/">
+    <File Path="Backend/Appointments/appointments.proto" />
+    <File Path="Backend/Appointments/AppointmentsApi.http" />
+    <Project Path="Backend/Appointments/Xaberue.Playground.HospitalManager.Appointments.Shared/Xaberue.Playground.HospitalManager.Appointments.Shared.csproj" />
+    <Project Path="Backend/Appointments/Xaberue.Playground.HospitalManager.Appointments.WebAPI/Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/3. Backend/Doctors/">
+    <File Path="Backend/Doctors/doctors.proto" />
+    <File Path="Backend/Doctors/DoctorsApi.http" />
+    <File Path="Backend/Doctors/SQL_Script_Doctors.sql" />
+    <Project Path="Backend/Doctors/Xaberue.Playground.HospitalManager.Doctors.Shared/Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
+    <Project Path="Backend/Doctors/Xaberue.Playground.HospitalManager.Doctors.WebAPI/Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/3. Backend/Patients/">
+    <File Path="Backend/Patients/patients.proto" />
+    <File Path="Backend/Patients/PatientsApi.http" />
+    <File Path="Backend/Patients/SQL_Script_Patients.sql" />
+    <Project Path="Backend/Patients/Xaberue.Playground.HospitalManager.Patients.Shared/Xaberue.Playground.HospitalManager.Patients.Shared.csproj" />
+    <Project Path="Backend/Patients/Xaberue.Playground.HospitalManager.Patients.WebAPI/Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
+  </Folder>
+</Solution>
