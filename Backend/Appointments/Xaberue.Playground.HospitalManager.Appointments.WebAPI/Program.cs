@@ -32,11 +32,14 @@ app.UseHttpsRedirection();
 
 app.MapGrpcService<AppointmentsGrpcService>();
 
-app.MapGet("/appointments", async (IMongoClient client) =>
+app.MapGet("/appointments/current", async (IMongoClient client) =>
 {
+    var today = DateTime.Today;
     var db = client.GetDatabase("AppointmentsDb");
     var collection = db.GetCollection<Appointment>("Appointments");
-    var appointments = (await collection.Find(_ => true).ToListAsync()).Select(x => x.ToDto());
+    var filter = Builders<Appointment>.Filter.Gt(a => a.Date, today) &
+        Builders<Appointment>.Filter.Ne(a => a.Status, AppointmentStatus.Completed);
+    var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToSummaryDto());
 
     return Results.Ok(appointments);
 });

@@ -1,7 +1,7 @@
 @Appointments.WebAPI_HostAddress = https://localhost:7113
 
 
-GET {{Appointments.WebAPI_HostAddress}}/appointments
+GET {{Appointments.WebAPI_HostAddress}}/appointments/current
 Accept: application/json
 
 ###

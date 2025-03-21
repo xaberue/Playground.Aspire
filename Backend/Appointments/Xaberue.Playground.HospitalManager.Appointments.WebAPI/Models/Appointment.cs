@@ -12,6 +12,7 @@ public class Appointment
     public int PatientId { get; init; }
     public int DoctorId { get; init; }
     public DateTime Date { get; init; }
+    public string? Box { get; set; }
     public string Notes { get; init; }
     public CriticalityLevel? Criticality { get; init; }
     public AppointmentStatus Status { get; init; }
