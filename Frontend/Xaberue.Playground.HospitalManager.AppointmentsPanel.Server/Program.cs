@@ -10,6 +10,7 @@ var appointmentsApiUrl = builder.Configuration.GetConnectionString("Appointments
 
 builder.AddServiceDefaults();
 
+builder.Services.AddCors();
 builder.Services.AddOpenApi();
 
 builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
@@ -30,8 +31,8 @@ else
     builder.Services.AddScoped<IAppointmentsApiClient, AppointmentsRestApiClient>();
 }
 
-var app = builder.Build();
 
+var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
@@ -41,6 +42,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(policy => policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
 
 app.MapGet("/api/appointments/current", async (IAppointmentsApiClient appointmentsApiClient) =>
 {

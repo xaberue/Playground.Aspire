@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
+import { AppointmentModel } from './appointment.model';
+import { AppointmentService } from './appointments.service';
 
 @Component({
   selector: 'app-root',
@@ -10,20 +12,16 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  appointments = [
-    <AppointmentModel>{ code: '1234', box: 'Box 1', state: 'Scheduled' },
-    <AppointmentModel>{ code: '1235', box: 'Box 2', state: 'Scheduled' },
-    <AppointmentModel>{ code: '1235', box: '-', state: 'Waiting' }
-  ]
+  appointments: AppointmentModel[] = [];
 
+  constructor(private appointmentService: AppointmentService) { }
 
-}
+  ngOnInit(): void {
+    this.appointmentService.getAppointments().subscribe(appointments => {
+      this.appointments = appointments;
+    });
+  }
 
-
-interface AppointmentModel {
-  code: string;
-  box: string;
-  state: string;
 }
