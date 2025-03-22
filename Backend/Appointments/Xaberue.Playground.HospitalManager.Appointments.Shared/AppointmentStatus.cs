@@ -1,4 +1,4 @@
-﻿namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
+﻿namespace Xaberue.Playground.HospitalManager.Appointments.Shared;
 
 public enum AppointmentStatus
 {

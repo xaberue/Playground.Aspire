@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using MongoDB.Driver;
+using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
@@ -16,12 +17,26 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
     }
 
 
-    public override async Task<GetAllAppointmentsResponse> GetAll(GetAllAppointmentsRequest request, ServerCallContext context)
+    public override async Task<GetAppointmentsResponse> GetAllToday(GetAllTodayAppointmentsRequest request, ServerCallContext context)
     {
         var db = _mongoClient.GetDatabase("AppointmentsDb");
         var collection = db.GetCollection<Appointment>("Appointments");
-        var appointments = (await collection.Find(_ => true).ToListAsync()).Select(x => x.ToGrpcModel());
-        var response = new GetAllAppointmentsResponse();
+        var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today);
+        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToGrpcModel());
+        var response = new GetAppointmentsResponse();
+        response.Appointments.AddRange(appointments);
+
+        return response;
+    }
+
+    public override async Task<GetAppointmentsResponse> GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest request, ServerCallContext context)
+    {
+        var db = _mongoClient.GetDatabase("AppointmentsDb");
+        var collection = db.GetCollection<Appointment>("Appointments");
+        var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today) &
+            Builders<Appointment>.Filter.Ne(a => a.Status, AppointmentStatus.Completed);
+        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToGrpcModel());
+        var response = new GetAppointmentsResponse();
         response.Appointments.AddRange(appointments);
 
         return response;

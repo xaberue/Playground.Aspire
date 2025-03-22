@@ -5,23 +5,25 @@ option csharp_namespace = "Xaberue.Playground.HospitalManager.Appointments";
 package appointmentsgrpc;
 
 service Appointments {
-    rpc GetAll(GetAllAppointmentsRequest) returns (GetAllAppointmentsResponse);
+    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (GetAppointmentsResponse);
+    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (GetAppointmentsResponse);
     rpc Create(CreateAppointmentRequest) returns (CreateAppointmentResponse);
 }
 
 
-message AppointmentModel {
+message AppointmentSummaryModel {
 	string id = 1;
-	int32 patientId = 2;
-	int32 doctorId = 3;
-	string date = 4;
-	string notes = 5;
+	string date = 2;
+	string box = 3;
+	int32 status = 4;
 }
 
-message GetAllAppointmentsRequest{ }
+message GetAllTodayAppointmentsRequest{ }
 
-message GetAllAppointmentsResponse{
-    repeated AppointmentModel appointments = 1;
+message GetAllCurrentActiveAppointmentsRequest{ }
+
+message GetAppointmentsResponse{
+    repeated AppointmentSummaryModel appointments = 1;
 }
 
 message CreateAppointmentRequest{ 
@@ -31,6 +33,5 @@ message CreateAppointmentRequest{
 }
 
 message CreateAppointmentResponse{
-    AppointmentModel appointment = 1;
+    AppointmentSummaryModel appointment = 1;
 }
-

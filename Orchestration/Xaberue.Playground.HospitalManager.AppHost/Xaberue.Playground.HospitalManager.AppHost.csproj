@@ -15,6 +15,7 @@
 		<ProjectReference Include="..\..\Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.WebAPI\Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.WebAPI\Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.csproj" />
 		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
 
 		<PackageReference Include="Aspire.Hosting.AppHost" />

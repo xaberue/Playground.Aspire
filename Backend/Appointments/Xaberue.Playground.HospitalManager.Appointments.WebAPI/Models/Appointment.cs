@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using Xaberue.Playground.HospitalManager.Appointments.Shared;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 

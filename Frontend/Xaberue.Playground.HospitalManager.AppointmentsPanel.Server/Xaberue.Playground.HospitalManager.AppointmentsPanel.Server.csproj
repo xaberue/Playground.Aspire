@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.RabbitMQ.Client" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Google.Protobuf" />
+		<PackageReference Include="Grpc.Net.Client" />
+		<PackageReference Include="Grpc.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.Shared\Xaberue.Playground.HospitalManager.Appointments.Shared.csproj" />
+		<ProjectReference Include="..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="..\..\Backend\Appointments\appointments.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+</Project>

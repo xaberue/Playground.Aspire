@@ -1,0 +1,6 @@
+@AppointmentsPanel.Server_HostAddress = https://localhost:7159
+
+GET {{AppointmentsPanel.Server_HostAddress}}/api/appointments/current
+Accept: application/json
+
+###

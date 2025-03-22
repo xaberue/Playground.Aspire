@@ -31,7 +31,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="..\..\Backend\Appointments\appointments.proto" GrpcServices="Client" />
 		<Protobuf Include="..\..\Backend\Doctors\doctors.proto" GrpcServices="Client" />
 		<Protobuf Include="..\..\Backend\Patients\patients.proto" GrpcServices="Client" />
 	</ItemGroup>
