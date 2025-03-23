@@ -23,7 +23,7 @@ public class AppointmentRestApiClient : IAppointmentApiService
 
         return appointments.Select(x => 
             new AppointmentSummaryViewModel(
-                x.Id,
+                x.Code,
                 x.Date,
                 x.Box,
                 x.Status.ToString()

@@ -27,7 +27,7 @@ public class AppointmentGrpcApiClient : IAppointmentApiService
 
         return response.Appointments.Select(x => 
             new AppointmentSummaryViewModel(
-                x.Id,
+                x.Code,
                 DateTime.Parse(x.Date), x.Box,
                 ((AppointmentStatus)x.Status).ToString()
             ));

@@ -14,10 +14,11 @@ public class AppointmentRegisteredProcessor : BackgroundService
     private readonly IConnection _rabbitMqConnection;
     private readonly IModel _rabbitMqChannel;
     private readonly IMongoClient _mongoDbClient;
+    private readonly AppointmentDailyCodeGeneratorService _appointmentDailyCodeGeneratorService;
     private readonly ILogger<AppointmentRegisteredProcessor> _logger;
 
 
-    public AppointmentRegisteredProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<AppointmentRegisteredProcessor> logger)
+    public AppointmentRegisteredProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, AppointmentDailyCodeGeneratorService appointmentDailyCodeGeneratorService, ILogger<AppointmentRegisteredProcessor> logger)
     {
         _rabbitMqConnection = rabbitMqConnection;
         _rabbitMqChannel = _rabbitMqConnection.CreateModel();
@@ -34,6 +35,7 @@ public class AppointmentRegisteredProcessor : BackgroundService
         _rabbitMqChannel.QueueDeclare(queue: AppointmentsConstants.AppointmentRegistered, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
 
         _mongoDbClient = mongoDbClient;
+        _appointmentDailyCodeGeneratorService = appointmentDailyCodeGeneratorService;
         _logger = logger;
     }
 
@@ -95,7 +97,8 @@ public class AppointmentRegisteredProcessor : BackgroundService
         {
             var db = _mongoDbClient.GetDatabase("AppointmentsDb");
             var collection = db.GetCollection<Appointment>("Appointments");
-            var appointment = new Appointment(creationDto.PatientId, creationDto.DoctorId, creationDto.Notes);
+            var generatedCode = await _appointmentDailyCodeGeneratorService.GenerateAsync();
+            var appointment = new Appointment(creationDto.PatientId, creationDto.DoctorId, generatedCode, creationDto.Notes);
 
             await collection.InsertOneAsync(appointment);
             Console.WriteLine("Appointment successfully saved to the database.");

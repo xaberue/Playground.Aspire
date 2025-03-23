@@ -16,6 +16,8 @@ builder.Services.AddGrpcReflection();
 builder.AddMongoDBClient(connectionName: "AppointmentsDb");
 builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 
+builder.Services.AddSingleton<AppointmentDailyCodeGeneratorService>();
+
 builder.Services.AddHostedService<AppointmentRegisteredProcessor>();
 
 var app = builder.Build();
@@ -53,11 +55,12 @@ app.MapGet("/appointments/current", async (IMongoClient client) =>
     return Results.Ok(appointments);
 });
 
-app.MapPost("/appointment", async (IMongoClient client, AppointmentRegistrationDto appointmentCreation) =>
+app.MapPost("/appointment", async (IMongoClient client, AppointmentDailyCodeGeneratorService appointmentCodeGeneratorService, AppointmentRegistrationDto appointmentCreation) =>
 {
     var db = client.GetDatabase("AppointmentsDb");
     var collection = db.GetCollection<Appointment>("Appointments");
-    var appointment = new Appointment(appointmentCreation.PatientId, appointmentCreation.DoctorId, appointmentCreation.Notes);
+    var generatedCode = await appointmentCodeGeneratorService.GenerateAsync();
+    var appointment = new Appointment(appointmentCreation.PatientId, appointmentCreation.DoctorId, generatedCode, appointmentCreation.Notes);
 
     await collection.InsertOneAsync(appointment);
 

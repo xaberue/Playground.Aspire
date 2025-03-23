@@ -9,11 +9,13 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
 {
 
     private readonly IMongoClient _mongoClient;
+    private readonly AppointmentDailyCodeGeneratorService _appointmentCodeGeneratorService;
 
 
-    public AppointmentsGrpcService(IMongoClient mongoClient)
+    public AppointmentsGrpcService(IMongoClient mongoClient, AppointmentDailyCodeGeneratorService appointmentCodeGeneratorService)
     {
         _mongoClient = mongoClient;
+        _appointmentCodeGeneratorService = appointmentCodeGeneratorService;
     }
 
 
@@ -47,7 +49,8 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
         if (request.DoctorId <= 0 || request.PatientId <= 0)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "DoctorId and/or PatientId must be set and valid"));
 
-        var appointment = new Appointment(request.PatientId, request.DoctorId, request.Notes);
+        var generatedCode = await _appointmentCodeGeneratorService.GenerateAsync();
+        var appointment = new Appointment(request.PatientId, request.DoctorId, generatedCode, request.Notes);
         var db = _mongoClient.GetDatabase("AppointmentsDb");
         var collection = db.GetCollection<Appointment>("Appointments");
 

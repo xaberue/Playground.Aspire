@@ -12,7 +12,7 @@ service Appointments {
 
 
 message AppointmentSummaryModel {
-	string id = 1;
+	string code = 1;
 	string date = 2;
 	string box = 3;
 	int32 status = 4;
