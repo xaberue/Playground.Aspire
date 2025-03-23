@@ -5,13 +5,13 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 
-public class PatientRestService : IPatientService
+public class PatientRestApiClient : IPatientApiService
 {
 
     private readonly IHttpClientFactory _httpClientFactory;
 
 
-    public PatientRestService(IHttpClientFactory httpClientFactory)
+    public PatientRestApiClient(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
     }

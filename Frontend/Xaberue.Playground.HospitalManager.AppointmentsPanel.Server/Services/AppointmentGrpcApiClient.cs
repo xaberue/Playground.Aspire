@@ -6,13 +6,13 @@ using AppointmentsGrpc = Xaberue.Playground.HospitalManager.Appointments.Appoint
 
 namespace Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Services;
 
-public class AppointmentsGrpcApiClient : IAppointmentsApiClient
+public class AppointmentGrpcApiClient : IAppointmentApiService
 {
 
     private readonly string _appointmentsApiUrl;
 
 
-    public AppointmentsGrpcApiClient(String appointmentsApiUrl)
+    public AppointmentGrpcApiClient(String appointmentsApiUrl)
     {
         _appointmentsApiUrl = appointmentsApiUrl;
     }

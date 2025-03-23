@@ -72,15 +72,15 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 if (grpcEnabled)
 {
-    builder.Services.AddScoped<IPatientService>(x => new PatientGrpcService(patientsApiUrl));
-    builder.Services.AddScoped<IDoctorService>(x => new DoctorGrpcService(doctorsApiUrl));
+    builder.Services.AddScoped<IPatientApiService>(x => new PatientGrpcApiClient(patientsApiUrl));
+    builder.Services.AddScoped<IDoctorApiService>(x => new DoctorGrpcApiClient(doctorsApiUrl));
 }
 else
 {
-    builder.Services.AddScoped<IPatientService, PatientRestService>();
-    builder.Services.AddScoped<IDoctorService, DoctorRestService>();
+    builder.Services.AddScoped<IPatientApiService, PatientRestApiClient>();
+    builder.Services.AddScoped<IDoctorApiService, DoctorRestApiClient>();
 }
-builder.Services.AddScoped<IAppointmentService, AppointmentRabbitService>();
+builder.Services.AddScoped<IAppointmentApiService, AppointmentRabbitService>();
 
 
 var app = builder.Build();
@@ -103,7 +103,7 @@ app.UseAntiforgery();
 
 var group = app.MapGroup("/api");
 
-group.MapGet("/doctors/grid", async (IDoctorService doctorService) =>
+group.MapGet("/doctors/grid", async (IDoctorApiService doctorService) =>
 {
     var data = await doctorService.GetAllGridModelsAsync();
 
@@ -111,7 +111,7 @@ group.MapGet("/doctors/grid", async (IDoctorService doctorService) =>
 })
 .WithName("GetAllDoctorGridModels");
 
-group.MapGet("/doctors/selection", async (IDoctorService doctorService) =>
+group.MapGet("/doctors/selection", async (IDoctorApiService doctorService) =>
 {
     var data = await doctorService.GetAllSelectionModelsAsync();
 
@@ -119,7 +119,7 @@ group.MapGet("/doctors/selection", async (IDoctorService doctorService) =>
 })
 .WithName("GetAllDoctorSelectionModels");
 
-group.MapGet("/patients/grid", async (IPatientService patientService) =>
+group.MapGet("/patients/grid", async (IPatientApiService patientService) =>
 {
     var data = await patientService.GetAllGridModelsAsync();
 
@@ -127,7 +127,7 @@ group.MapGet("/patients/grid", async (IPatientService patientService) =>
 })
 .WithName("GetAllPatientGridModels");
 
-group.MapGet("/patients/{code}", async (string code, IPatientService patientService) =>
+group.MapGet("/patients/{code}", async (string code, IPatientApiService patientService) =>
 {
     var data = await patientService.GetSelectionModelAsync(code);
 
@@ -135,7 +135,7 @@ group.MapGet("/patients/{code}", async (string code, IPatientService patientServ
 })
 .WithName("GetPatientSelectionModelByCode");
 
-group.MapGet("/patients/selection", async (IPatientService patientService) =>
+group.MapGet("/patients/selection", async (IPatientApiService patientService) =>
 {
     var data = await patientService.GetAllSelectionModelsAsync();
 
@@ -143,7 +143,7 @@ group.MapGet("/patients/selection", async (IPatientService patientService) =>
 })
 .WithName("GetAllPatientSelectionModels");
 
-group.MapPost("/appointments", async (IAppointmentService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
+group.MapPost("/appointments", async (IAppointmentApiService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
 {
     await appointmentService.RegisterAsync(creationModel, cancellationToken);
 

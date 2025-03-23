@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
 import { AppointmentModel } from './appointment.model';
-import { AppointmentService } from './appointments.service';
+import { AppointmentApiService } from './appointments-api.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 
   appointments: AppointmentModel[] = [];
 
-  constructor(private appointmentService: AppointmentService) { }
+  constructor(private appointmentService: AppointmentApiService) { }
 
   ngOnInit(): void {
     this.appointmentService.getAppointments().subscribe(appointments => {

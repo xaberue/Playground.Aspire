@@ -2,7 +2,7 @@
 
 namespace Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Services;
 
-public interface IAppointmentsApiClient
+public interface IAppointmentApiService
 {
     Task<IEnumerable<AppointmentSummaryViewModel>> GetAllCurrentActiveAsync(CancellationToken cancellationToken = default);
 }

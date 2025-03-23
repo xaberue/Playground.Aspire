@@ -4,13 +4,13 @@ using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Models;
 
 namespace Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Services;
 
-public class AppointmentsRestApiClient : IAppointmentsApiClient
+public class AppointmentRestApiClient : IAppointmentApiService
 {
 
     private readonly IHttpClientFactory _httpClientFactory;
 
 
-    public AppointmentsRestApiClient(IHttpClientFactory httpClientFactory)
+    public AppointmentRestApiClient(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
     }

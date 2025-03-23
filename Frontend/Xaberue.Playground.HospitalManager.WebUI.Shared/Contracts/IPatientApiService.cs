@@ -2,7 +2,7 @@
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 
-public interface IPatientService
+public interface IPatientApiService
 {
     Task<IEnumerable<PatientGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default);
     Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default);

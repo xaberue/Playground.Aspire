@@ -17,7 +17,7 @@ builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 
 if (grpcEnabled)
 {
-    builder.Services.AddScoped<IAppointmentsApiClient>(x => new AppointmentsGrpcApiClient(appointmentsApiUrl));
+    builder.Services.AddScoped<IAppointmentApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl));
 }
 else
 {
@@ -28,7 +28,7 @@ else
         client.BaseAddress = new Uri(appointmentsApiUrl);
     });
 
-    builder.Services.AddScoped<IAppointmentsApiClient, AppointmentsRestApiClient>();
+    builder.Services.AddScoped<IAppointmentApiService, AppointmentRestApiClient>();
 }
 
 
@@ -45,7 +45,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(policy => policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
 
-app.MapGet("/api/appointments/current", async (IAppointmentsApiClient appointmentsApiClient) =>
+app.MapGet("/api/appointments/current", async (IAppointmentApiService appointmentsApiClient) =>
 {
     var appointments = await appointmentsApiClient.GetAllCurrentActiveAsync();
 

@@ -71,13 +71,13 @@
     public IToastService ToastService { get; set; } = null!;
 
     [Inject]
-    public IDoctorService DoctorsApiService { get; set; } = null!;
+    public IDoctorApiService DoctorsApiService { get; set; } = null!;
 
     [Inject]
-    public IPatientService PatientsApiService { get; set; } = null!;
+    public IPatientApiService PatientsApiService { get; set; } = null!;
 
     [Inject]
-    public IAppointmentService AppointmentApiService { get; set; } = null!;
+    public IAppointmentApiService AppointmentApiService { get; set; } = null!;
 
 
     protected override async Task OnInitializedAsync()

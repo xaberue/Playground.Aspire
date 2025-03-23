@@ -6,7 +6,7 @@ import { AppointmentModel } from './appointment.model';
 @Injectable({
   providedIn: 'root',
 })
-export class AppointmentService {
+export class AppointmentApiService {
   private readonly apiUrl = 'https://localhost:7159/api/appointments';
 
   constructor(private http: HttpClient) { }

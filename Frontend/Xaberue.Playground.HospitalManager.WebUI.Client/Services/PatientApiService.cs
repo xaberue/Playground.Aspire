@@ -4,7 +4,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Client.Services;
 
-public class PatientApiService(HttpClient patientsHttpClient) : IPatientService
+public class PatientApiService(HttpClient patientsHttpClient) : IPatientApiService
 {
 
     public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
