@@ -2,9 +2,9 @@
 
 namespace Xaberue.Playground.HospitalManager.Appointments.Shared;
 
-public record AppointmentSummaryDto(string Code, DateTime Date, string Box, AppointmentStatus Status);
+public record AppointmentSummariesDto(IEnumerable<AppointmentSummaryDto> Appointments);
 
-public record AppointmentDetailDto(string Code, DateTime Date, int PatientId, int DoctorId, string Box, string Notes);
+public record AppointmentSummaryDto(string Code, string Date, string Box, AppointmentStatus Status);
 
 public record AppointmentRegistrationDto
 {

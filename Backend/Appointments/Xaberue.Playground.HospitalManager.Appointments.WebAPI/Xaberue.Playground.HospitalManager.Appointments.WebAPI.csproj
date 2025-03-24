@@ -7,6 +7,7 @@
 		<RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
 		<ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
 		<EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
 		<ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0</ContainerBaseImage>
 		<UserSecretsId>43652ee7-b5c0-4579-940a-87c64c258175</UserSecretsId>
 		<DockerfileContext>..\..\..</DockerfileContext>
@@ -21,6 +22,7 @@
 		<PackageReference Include="Aspire.RabbitMQ.Client" />
 		<PackageReference Include="Grpc.AspNetCore" />
 		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 	</ItemGroup>
 

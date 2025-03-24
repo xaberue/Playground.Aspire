@@ -1,13 +1,27 @@
 syntax = "proto3";
 
 option csharp_namespace = "Xaberue.Playground.HospitalManager.Appointments";
+import "google/api/annotations.proto";
 
 package appointmentsgrpc;
 
 service Appointments {
-    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (GetAppointmentsResponse);
-    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (GetAppointmentsResponse);
-    rpc Create(CreateAppointmentRequest) returns (CreateAppointmentResponse);
+    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (GetAppointmentsResponse){
+		option (google.api.http) = {
+			get: "/appointments/today"
+		};
+	}
+    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (GetAppointmentsResponse){
+		option (google.api.http) = {
+			get: "/appointments/current"
+		};
+	}
+    rpc Create(CreateAppointmentRequest) returns (CreateAppointmentResponse){
+		option (google.api.http) = {
+			post: "/appointment",
+			body: "*"
+		};
+	}
 }
 
 

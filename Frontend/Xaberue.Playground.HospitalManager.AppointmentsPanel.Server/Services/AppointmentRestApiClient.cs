@@ -19,12 +19,12 @@ public class AppointmentRestApiClient : IAppointmentApiService
     public async Task<IEnumerable<AppointmentSummaryViewModel>> GetAllCurrentActiveAsync(CancellationToken cancellationToken = default)
     {
         var appointmentsClient = _httpClientFactory.CreateClient(HospitalManagerAppointmentsPanelApiConstants.AppointmentsApiClient);
-        var appointments = await appointmentsClient.GetFromJsonAsync<AppointmentSummaryDto[]>("/appointments/current") ?? [];
+        var appointments = await appointmentsClient.GetFromJsonAsync<AppointmentSummariesDto>("/appointments/current");
 
-        return appointments.Select(x => 
+        return (appointments is null) ? [] : appointments.Appointments.Select(x =>
             new AppointmentSummaryViewModel(
                 x.Code,
-                x.Date,
+                DateTime.Parse(x.Date),
                 x.Box,
                 x.Status.ToString()
            ));

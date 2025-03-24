@@ -4,10 +4,12 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.RabbitMQ.Client" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Google.Protobuf" />
 		<PackageReference Include="Grpc.Net.Client" />
