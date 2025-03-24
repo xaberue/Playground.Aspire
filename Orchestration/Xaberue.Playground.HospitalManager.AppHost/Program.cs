@@ -31,7 +31,7 @@ var appointmentsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalMan
     .WithReference(rabbitmq)
     .WaitFor(appointmentsDb);
 
-builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("webui")
+builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("hospital-manager-webui")
     .WithReference(identityDb)
     .WithReference(cache)
     .WithReference(rabbitmq)
