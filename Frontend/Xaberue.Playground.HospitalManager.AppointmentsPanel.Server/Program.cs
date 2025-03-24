@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
 var appointmentsApiUrl = builder.Configuration.GetConnectionString("AppointmentsApiUrl")
     ?? throw new ArgumentException("AppointmentsApiUrl is mandatory");
+var appointmentsPanelClientUrl = builder.Configuration["AppointmentsPanelClientUrl"]
+    ?? throw new ArgumentException("AppointmentsApiUrl is mandatory");
 
 builder.AddServiceDefaults();
 
@@ -43,7 +45,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
+app.UseCors(policy => policy.WithOrigins(appointmentsPanelClientUrl).AllowAnyMethod().AllowAnyHeader());
 
 app.MapGet("/api/appointments/current", async (IAppointmentApiService appointmentsApiClient) =>
 {

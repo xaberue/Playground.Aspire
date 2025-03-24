@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
 import { AppointmentModel } from './appointment.model';
-import { AppointmentApiService } from './appointments-api.service';
+import { AppointmentApiService } from './appointment-api.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +14,7 @@ import { AppointmentApiService } from './appointments-api.service';
 })
 export class AppComponent implements OnInit {
 
+  title = 'AppointmentsPanel';
   appointments: AppointmentModel[] = [];
 
   constructor(private appointmentService: AppointmentApiService) { }

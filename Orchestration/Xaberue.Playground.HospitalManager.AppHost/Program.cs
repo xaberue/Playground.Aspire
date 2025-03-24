@@ -40,8 +40,18 @@ builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("we
     .WithEnvironment("ConnectionStrings__PatientsApiUrl", patientsApi.GetEndpoint("https"))
     .WithEnvironment("ConnectionStrings__DoctorsApiUrl", doctorsApi.GetEndpoint("https"));
 
-builder.AddProject<Projects.Xaberue_Playground_HospitalManager_AppointmentsPanel_Server>("appointmentspanel-server")
+var appointmentsPanelServer = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_AppointmentsPanel_Server>("appointmentspanel-server")
     .WithEnvironment("ConnectionStrings__AppointmentsApiUrl", appointmentsApi.GetEndpoint("https"))
     .WithReference(rabbitmq);
+
+var appointmentsPanelClient = builder.AddNpmApp("appointmentspanel-client", "../../Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client")
+    .WithReference(appointmentsPanelServer)
+    .WaitFor(appointmentsPanelServer)
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
+appointmentsPanelServer
+    .WithEnvironment("AppointmentsPanelClientUrl", appointmentsPanelClient.GetEndpoint("http"));
 
 builder.Build().Run();

@@ -20,9 +20,19 @@
 
 		<PackageReference Include="Aspire.Hosting.AppHost" />
 		<PackageReference Include="Aspire.Hosting.MongoDB" />
+		<PackageReference Include="Aspire.Hosting.NodeJs" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
 		<PackageReference Include="Aspire.Hosting.Redis" />
 		<PackageReference Include="Aspire.Hosting.SqlServer" />
 	</ItemGroup>
 
+	<Target Name="RestoreNpm" BeforeTargets="Build" Condition=" '$(DesignTimeBuild)' != 'true' ">
+		<ItemGroup>
+			<PackageJsons Include="..\..\Frontend\*\package.json" />
+		</ItemGroup>
+
+		<Message Importance="Normal" Text="Installing npm packages for %(PackageJsons.RelativeDir)" Condition="!Exists('%(PackageJsons.RootDir)%(PackageJsons.Directory)/node_modules')" />
+		<Exec Command="npm install" WorkingDirectory="%(PackageJsons.RootDir)%(PackageJsons.Directory)" Condition="!Exists('%(PackageJsons.RootDir)%(PackageJsons.Directory)/node_modules')" />
+	</Target>
+	
 </Project>

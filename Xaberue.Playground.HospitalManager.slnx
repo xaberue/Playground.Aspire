@@ -4,6 +4,10 @@
     <Project Path="Orchestration/Xaberue.Playground.HospitalManager.ServiceDefaults/Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/2. Frontend/">
+    <Project Path="Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
     <Project Path="Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Server/Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.csproj" />
     <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Client/Xaberue.Playground.HospitalManager.WebUI.Client.csproj" />
     <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Server/Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
