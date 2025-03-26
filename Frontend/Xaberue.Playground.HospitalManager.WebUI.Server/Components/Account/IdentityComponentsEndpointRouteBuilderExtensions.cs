@@ -1,11 +1,11 @@
-using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
+using System.Text.Json;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components.Account.Pages;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components.Account.Pages.Manage;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Data;

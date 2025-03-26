@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
@@ -9,7 +9,7 @@ public class Appointment
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
-    
+
     public string Code { get; init; }
     public int PatientId { get; init; }
     public int DoctorId { get; init; }

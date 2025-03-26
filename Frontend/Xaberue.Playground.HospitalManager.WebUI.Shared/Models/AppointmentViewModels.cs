@@ -9,7 +9,7 @@ public record AppointmentGridViewModel
 public record AppointmentRegistrationViewModel
 {
     [Required]
-    public IEnumerable<PatientSelectionViewModel> Patients { get; set; } = Enumerable.Empty< PatientSelectionViewModel>();
+    public IEnumerable<PatientSelectionViewModel> Patients { get; set; } = Enumerable.Empty<PatientSelectionViewModel>();
     [Required]
     public IEnumerable<DoctorSelectionViewModel> Doctors { get; set; } = Enumerable.Empty<DoctorSelectionViewModel>();
     [Required]

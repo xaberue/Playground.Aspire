@@ -25,7 +25,7 @@ public class AppointmentGrpcApiClient : IAppointmentApiService
         var appointmentClient = new AppointmentsGrpc.AppointmentsClient(appointmentsChannel);
         var response = await appointmentClient.GetAllCurrentActiveAsync(new GetAllCurrentActiveAppointmentsRequest());
 
-        return response.Appointments.Select(x => 
+        return response.Appointments.Select(x =>
             new AppointmentSummaryViewModel(
                 x.Code,
                 DateTime.Parse(x.Date), x.Box,
