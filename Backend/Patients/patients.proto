@@ -6,7 +6,8 @@ package patientsgrpc;
 
 service Patients {
     rpc Get(GetPatientRequest) returns (GetPatientResponse);
-	rpc GetAll(GetAllPatientsRequest) returns (GetAllPatientsResponse);
+	rpc GetFiltered(GetFilteredPatientsRequest) returns (GetPatientsResponse);
+	rpc GetAll(GetAllPatientsRequest) returns (GetPatientsResponse);
 }
 
 
@@ -29,6 +30,10 @@ message GetPatientResponse{
 
 message GetAllPatientsRequest{ }
 
-message GetAllPatientsResponse{
+message GetFilteredPatientsRequest{ 
+	repeated int32 ids = 1;
+}
+
+message GetPatientsResponse{
     repeated PatientModel patients = 1;
 }

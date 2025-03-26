@@ -4,6 +4,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,11 +18,12 @@
 		<PackageReference Include="Google.Protobuf" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
@@ -34,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Protobuf Include="..\..\Backend\Appointments\appointments.proto" GrpcServices="Client" />
 		<Protobuf Include="..\..\Backend\Doctors\doctors.proto" GrpcServices="Client" />
 		<Protobuf Include="..\..\Backend\Patients\patients.proto" GrpcServices="Client" />
 	</ItemGroup>

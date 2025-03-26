@@ -2,7 +2,7 @@
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 
-public interface IAppointmentApiService
+public interface IAppointmentCommandApiService
 {
     Task RegisterAsync(AppointmentRegistrationViewModel creationViewModel, CancellationToken cancellationToken = default);
 }

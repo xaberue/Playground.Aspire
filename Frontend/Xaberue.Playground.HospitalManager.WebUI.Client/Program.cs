@@ -10,17 +10,22 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthenticationStateDeserialization();
 
-builder.Services.AddHttpClient<IDoctorApiService, DoctorApiService>(client =>
+builder.Services.AddHttpClient<IAppointmentQueryApiService, AppointmentApiService>(client =>
 {
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });
 
-builder.Services.AddHttpClient<IPatientApiService, PatientApiService>(client =>
+builder.Services.AddHttpClient<IAppointmentCommandApiService, AppointmentApiService>(client =>
 {
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });
 
-builder.Services.AddHttpClient<IAppointmentApiService, AppointmentApiService>(client =>
+builder.Services.AddHttpClient<IDoctorQueryApiService, DoctorApiService>(client =>
+{
+    client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
+});
+
+builder.Services.AddHttpClient<IPatientQueryApiService, PatientApiService>(client =>
 {
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });

@@ -5,7 +5,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 
-public class PatientRestApiClient : IPatientApiService
+public class PatientRestApiClient : IPatientQueryApiService
 {
 
     private readonly IHttpClientFactory _httpClientFactory;

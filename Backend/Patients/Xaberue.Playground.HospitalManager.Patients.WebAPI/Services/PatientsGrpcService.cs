@@ -28,10 +28,22 @@ public class PatientsGrpcService : Patients.PatientsBase
         return response;
     }
 
-    public override Task<GetAllPatientsResponse> GetAll(GetAllPatientsRequest request, ServerCallContext context)
+    public override Task<GetPatientsResponse> GetAll(GetAllPatientsRequest request, ServerCallContext context)
     {
+        var response = new GetPatientsResponse();
         var patients = _dbContext.Patients.Select(x => x.ToGrpcModel()).ToList();
-        var response = new GetAllPatientsResponse();
+
+        response.Patients.AddRange(patients);
+
+        return Task.FromResult(response);
+    }
+
+    public override Task<GetPatientsResponse> GetFiltered(GetFilteredPatientsRequest request, ServerCallContext context)
+    {
+        var response = new GetPatientsResponse();
+        var patients = _dbContext.Patients
+            .Where(x => request.Ids.Contains(x.Id))
+            .Select(x => x.ToGrpcModel()).ToList();
 
         response.Patients.AddRange(patients);
 

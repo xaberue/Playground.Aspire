@@ -6,12 +6,12 @@ import "google/api/annotations.proto";
 package appointmentsgrpc;
 
 service Appointments {
-    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (GetAppointmentsResponse){
+    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (AppointmentDetailsCollection){
 		option (google.api.http) = {
 			get: "/appointments/today"
 		};
 	}
-    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (GetAppointmentsResponse){
+    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (AppointmentSummariesCollection){
 		option (google.api.http) = {
 			get: "/appointments/current"
 		};
@@ -32,12 +32,28 @@ message AppointmentSummaryModel {
 	int32 status = 4;
 }
 
+message AppointmentDetailModel {
+	string id = 1;
+	string code = 2;
+	int32 doctorId = 3;
+	int32 patientId = 4;
+	string date = 5;
+	string box = 6;
+	string notes = 7;
+	optional int32 criticality = 8;
+	int32 status = 9;
+}
+
 message GetAllTodayAppointmentsRequest{ }
 
 message GetAllCurrentActiveAppointmentsRequest{ }
 
-message GetAppointmentsResponse{
+message AppointmentSummariesCollection{
     repeated AppointmentSummaryModel appointments = 1;
+}
+
+message AppointmentDetailsCollection{
+    repeated AppointmentDetailModel appointments = 1;
 }
 
 message CreateAppointmentRequest{ 

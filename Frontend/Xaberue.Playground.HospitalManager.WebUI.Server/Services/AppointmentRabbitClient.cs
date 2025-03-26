@@ -7,13 +7,13 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 
-public class AppointmentRabbitService : IAppointmentApiService
+public class AppointmentRabbitClient : IAppointmentCommandApiService
 {
 
     private readonly IConnection _connection;
 
 
-    public AppointmentRabbitService(IConnection connection)
+    public AppointmentRabbitClient(IConnection connection)
     {
         _connection = connection;
     }

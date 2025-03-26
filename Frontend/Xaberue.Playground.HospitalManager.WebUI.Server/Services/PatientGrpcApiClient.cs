@@ -7,7 +7,7 @@ using PatientsGrpc = Xaberue.Playground.HospitalManager.Patients.Patients;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 
-public class PatientGrpcApiClient : IPatientApiService
+public class PatientGrpcApiClient : IPatientQueryApiService
 {
 
     private readonly string _patientsApiUrl;

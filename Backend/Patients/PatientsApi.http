@@ -11,3 +11,9 @@ GET {{Patients.WebAPI_HostAddress}}/patients
 Accept: application/json
 
 ###
+
+
+GET {{Patients.WebAPI_HostAddress}}/patients?ids=3,5,9
+Accept: application/json
+
+###

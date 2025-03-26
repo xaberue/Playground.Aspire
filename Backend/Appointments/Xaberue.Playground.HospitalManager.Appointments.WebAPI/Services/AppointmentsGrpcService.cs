@@ -19,26 +19,26 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
     }
 
 
-    public override async Task<GetAppointmentsResponse> GetAllToday(GetAllTodayAppointmentsRequest request, ServerCallContext context)
+    public override async Task<AppointmentDetailsCollection> GetAllToday(GetAllTodayAppointmentsRequest request, ServerCallContext context)
     {
         var db = _mongoClient.GetDatabase("AppointmentsDb");
         var collection = db.GetCollection<Appointment>("Appointments");
         var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today);
-        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToGrpcModel());
-        var response = new GetAppointmentsResponse();
+        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToDetailGrpcModel());
+        var response = new AppointmentDetailsCollection();
         response.Appointments.AddRange(appointments);
 
         return response;
     }
 
-    public override async Task<GetAppointmentsResponse> GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest request, ServerCallContext context)
+    public override async Task<AppointmentSummariesCollection> GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest request, ServerCallContext context)
     {
         var db = _mongoClient.GetDatabase("AppointmentsDb");
         var collection = db.GetCollection<Appointment>("Appointments");
         var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today) &
             Builders<Appointment>.Filter.Ne(a => a.Status, AppointmentStatus.Completed);
-        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToGrpcModel());
-        var response = new GetAppointmentsResponse();
+        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToSummaryGrpcModel());
+        var response = new AppointmentSummariesCollection();
         response.Appointments.AddRange(appointments);
 
         return response;
@@ -55,7 +55,7 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
         var collection = db.GetCollection<Appointment>("Appointments");
 
         await collection.InsertOneAsync(appointment);
-        var response = new CreateAppointmentResponse { Appointment = appointment.ToGrpcModel() };
+        var response = new CreateAppointmentResponse { Appointment = appointment.ToSummaryGrpcModel() };
 
         return response;
     }

@@ -14,6 +14,8 @@ using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
+var appointmentsApiUrl = builder.Configuration.GetConnectionString("AppointmentsApiUrl")
+    ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
 var patientsApiUrl = builder.Configuration.GetConnectionString("PatientsAPIUrl")
     ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
 var doctorsApiUrl = builder.Configuration.GetConnectionString("DoctorsApiUrl")
@@ -52,35 +54,46 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddHttpClient(
-    HospitalManagerApiConstants.PatientsApiClient,
-    client =>
-    {
-        client.BaseAddress = new Uri(patientsApiUrl);
-    });
-
-builder.Services.AddHttpClient(
-    HospitalManagerApiConstants.DoctorsApiClient,
-    client =>
-    {
-        client.BaseAddress = new Uri(doctorsApiUrl);
-    });
-
 builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 if (grpcEnabled)
 {
-    builder.Services.AddScoped<IPatientApiService>(x => new PatientGrpcApiClient(patientsApiUrl));
-    builder.Services.AddScoped<IDoctorApiService>(x => new DoctorGrpcApiClient(doctorsApiUrl));
+    //TODO: Improve that, isolate the gRPC client creation
+    builder.Services.AddScoped<IAppointmentQueryApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl, doctorsApiUrl, patientsApiUrl));
+    builder.Services.AddScoped<IDoctorQueryApiService>(x => new DoctorGrpcApiClient(doctorsApiUrl));
+    builder.Services.AddScoped<IPatientQueryApiService>(x => new PatientGrpcApiClient(patientsApiUrl));
 }
 else
 {
-    builder.Services.AddScoped<IPatientApiService, PatientRestApiClient>();
-    builder.Services.AddScoped<IDoctorApiService, DoctorRestApiClient>();
+    builder.Services.AddHttpClient(
+        HospitalManagerApiConstants.AppointmentsApiClient,
+        client =>
+        {
+            client.BaseAddress = new Uri(appointmentsApiUrl);
+        });
+
+    builder.Services.AddHttpClient(
+        HospitalManagerApiConstants.PatientsApiClient,
+        client =>
+        {
+            client.BaseAddress = new Uri(patientsApiUrl);
+        });
+
+    builder.Services.AddHttpClient(
+        HospitalManagerApiConstants.DoctorsApiClient,
+        client =>
+        {
+            client.BaseAddress = new Uri(doctorsApiUrl);
+        });
+
+    builder.Services.AddScoped<IAppointmentQueryApiService, AppointmentRestApiClient>();
+    builder.Services.AddScoped<IPatientQueryApiService, PatientRestApiClient>();
+    builder.Services.AddScoped<IDoctorQueryApiService, DoctorRestApiClient>();
 }
-builder.Services.AddScoped<IAppointmentApiService, AppointmentRabbitService>();
+
+builder.Services.AddScoped<IAppointmentCommandApiService, AppointmentRabbitClient>();
 
 
 var app = builder.Build();
@@ -103,7 +116,7 @@ app.UseAntiforgery();
 
 var group = app.MapGroup("/api");
 
-group.MapGet("/doctors/grid", async (IDoctorApiService doctorService) =>
+group.MapGet("/doctors/grid", async (IDoctorQueryApiService doctorService) =>
 {
     var data = await doctorService.GetAllGridModelsAsync();
 
@@ -111,7 +124,7 @@ group.MapGet("/doctors/grid", async (IDoctorApiService doctorService) =>
 })
 .WithName("GetAllDoctorGridModels");
 
-group.MapGet("/doctors/selection", async (IDoctorApiService doctorService) =>
+group.MapGet("/doctors/selection", async (IDoctorQueryApiService doctorService) =>
 {
     var data = await doctorService.GetAllSelectionModelsAsync();
 
@@ -119,7 +132,7 @@ group.MapGet("/doctors/selection", async (IDoctorApiService doctorService) =>
 })
 .WithName("GetAllDoctorSelectionModels");
 
-group.MapGet("/patients/grid", async (IPatientApiService patientService) =>
+group.MapGet("/patients/grid", async (IPatientQueryApiService patientService) =>
 {
     var data = await patientService.GetAllGridModelsAsync();
 
@@ -127,7 +140,7 @@ group.MapGet("/patients/grid", async (IPatientApiService patientService) =>
 })
 .WithName("GetAllPatientGridModels");
 
-group.MapGet("/patients/{code}", async (string code, IPatientApiService patientService) =>
+group.MapGet("/patients/{code}", async (string code, IPatientQueryApiService patientService) =>
 {
     var data = await patientService.GetSelectionModelAsync(code);
 
@@ -135,7 +148,7 @@ group.MapGet("/patients/{code}", async (string code, IPatientApiService patientS
 })
 .WithName("GetPatientSelectionModelByCode");
 
-group.MapGet("/patients/selection", async (IPatientApiService patientService) =>
+group.MapGet("/patients/selection", async (IPatientQueryApiService patientService) =>
 {
     var data = await patientService.GetAllSelectionModelsAsync();
 
@@ -143,13 +156,24 @@ group.MapGet("/patients/selection", async (IPatientApiService patientService) =>
 })
 .WithName("GetAllPatientSelectionModels");
 
-group.MapPost("/appointments", async (IAppointmentApiService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
+group.MapGet("/appointments/today", async (IAppointmentQueryApiService appointmentService) =>
+{
+    var data = await appointmentService.GetAllToday();
+    return data;
+})
+    .WithName("GetAllTodayAppointments");
+
+group.MapPost("/appointment", async (IAppointmentCommandApiService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
 {
     await appointmentService.RegisterAsync(creationModel, cancellationToken);
 
     return Results.Accepted();
 })
 .WithName("CreateAppointment");
+
+//TODO: Extract mappings
+
+//TODO: Move Endpoints to a RouteGroupeBuilder extension method
 
 app.MapDefaultEndpoints();
 
