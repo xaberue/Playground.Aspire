@@ -20,7 +20,7 @@ public static class AppointmentExtensions
             PatientId = appointment.PatientId,
             Date = appointment.Date.ToString(),
             Box = string.IsNullOrWhiteSpace(appointment.Box) ? "-" : appointment.Box,
-            Notes = appointment.Notes,
+            Reason = appointment.Reason,
             Criticality = (appointment.Criticality is null) ? -1 : (int)appointment.Criticality,
             Status = (int)appointment.Status
         };

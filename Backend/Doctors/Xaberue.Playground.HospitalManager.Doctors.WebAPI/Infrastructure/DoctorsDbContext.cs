@@ -10,4 +10,15 @@ public class DoctorsDbContext : DbContext
 
     public DoctorsDbContext(DbContextOptions<DoctorsDbContext> options)
         : base(options) { }
+
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Doctor>(x => 
+        {
+            x.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            x.Property(x => x.Surname).HasMaxLength(100).IsRequired();
+            x.Property(x => x.BoxAssigned).HasMaxLength(10).IsRequired();
+        });
+    }
 }

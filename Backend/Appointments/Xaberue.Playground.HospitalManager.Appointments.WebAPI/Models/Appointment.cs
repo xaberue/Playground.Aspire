@@ -15,35 +15,36 @@ public class Appointment
     public int DoctorId { get; init; }
     public DateTime Date { get; init; }
     public string? Box { get; set; }
-    public string Notes { get; init; }
+    public string Reason { get; init; }
+    public string Notes { get; set; } = string.Empty;
     public CriticalityLevel? Criticality { get; init; }
     public AppointmentStatus Status { get; init; }
 
 
-    public Appointment(int patientId, int doctorId, string code, DateTime date, string notes, CriticalityLevel? criticality, AppointmentStatus status)
+    public Appointment(int patientId, int doctorId, string code, DateTime date, string reason, CriticalityLevel? criticality, AppointmentStatus status)
     {
         PatientId = patientId;
         DoctorId = doctorId;
         Code = code;
         Date = date;
-        Notes = notes;
+        Reason = reason;
         Criticality = criticality;
         Status = status;
     }
 
-    public Appointment(int patientId, int doctorId, string code, string notes)
-        : this(patientId, doctorId, code, DateTime.UtcNow, notes, null, AppointmentStatus.Admitted)
+    public Appointment(int patientId, int doctorId, string code, string reason)
+        : this(patientId, doctorId, code, DateTime.UtcNow, reason, null, AppointmentStatus.Registered)
     { }
 
 
-    public Appointment(ObjectId id, int patientId, string code, int doctorId, DateTime date, string notes, CriticalityLevel criticality, AppointmentStatus status)
-        : this(patientId, doctorId, code, date, notes, criticality, status)
+    public Appointment(ObjectId id, int patientId, string code, int doctorId, DateTime date, string reason, CriticalityLevel criticality, AppointmentStatus status)
+        : this(patientId, doctorId, code, date, reason, criticality, status)
     {
         Id = id;
     }
 
-    public Appointment(int patientId, int doctorId, string code, DateTime date, string notes)
-        : this(patientId, doctorId, code, date, notes, null, AppointmentStatus.Admitted)
+    public Appointment(int patientId, int doctorId, string code, DateTime date, string reason)
+        : this(patientId, doctorId, code, date, reason, null, AppointmentStatus.Admitted)
     { }
 
 }

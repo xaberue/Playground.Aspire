@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure;
 
@@ -11,9 +12,11 @@ using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure;
 namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(DoctorsDbContext))]
-    partial class DoctorsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250331213638_AddedDoctorBoxAssigned")]
+    partial class AddedDoctorBoxAssigned
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

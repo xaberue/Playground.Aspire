@@ -1,0 +1,67 @@
+﻿@page "/appointments"
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+@using Xaberue.Playground.HospitalManager.WebUI.Client.Services
+@using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
+
+@inject IAppointmentQueryApiService AppointmentsApiQueryService
+@inject IAppointmentCommandApiService AppointmentsApiCommandService
+@inject NavigationManager Navigation
+
+
+<PageTitle>Apointments</PageTitle>
+
+<h1>Today's appointments'</h1>
+
+<p>These are the appointments that we have today...</p>
+
+@if (appointments is null)
+{
+    <FluentProgressRing></FluentProgressRing>
+}
+else
+{
+    <FluentDataGrid Id="patientsGrid" Items="@appointments.AsQueryable()" GridTemplateColumns="0.5fr 0.75fr 1fr 1fr 2fr 0.5fr 1fr 1fr 0.5fr" TGridItem="AppointmentGridViewModel" Pagination="@pagination">
+        <PropertyColumn Title="Code" Property="@(c => c!.Code)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Time" Property="@(c => c!.Date)" Format="HH:mm" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Doctor" Property="@(c => c.DoctorFullName)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Patient" Property="@(c => c.PatientFullName)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Reason" Property="@(c => c!.Reason)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Box" Property="@(c => c!.Box)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Criticaly" Property="@(c => c!.Criticality.ToString())" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Status" Property="@(c => c!.Status.ToString())" Sortable="true" Align="Align.Start" />
+        <TemplateColumn Title="Admit">
+            <FluentButton aria-label="Admit patient" IconEnd="@(new Icons.Regular.Size20.ArrowHookDownRight())" OnClick="@(() => AdmitAsync(context))" />
+        </TemplateColumn>
+    </FluentDataGrid>
+
+    <FluentPaginator State="@pagination" />
+}
+
+
+@code {
+
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    private IEnumerable<AppointmentGridViewModel>? appointments;
+    private bool loading = true;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGridData();
+    }
+
+    private async Task AdmitAsync(AppointmentGridViewModel appointment)
+    {
+        var admissionViewModel = new AppointmentAdmissionViewModel(appointment.Id, appointment.DoctorId);
+        await AppointmentsApiCommandService.AdmitAsync(admissionViewModel);
+    }
+
+    private async Task LoadGridData()
+    {
+        appointments = await AppointmentsApiQueryService.GetAllToday();
+    }
+
+}

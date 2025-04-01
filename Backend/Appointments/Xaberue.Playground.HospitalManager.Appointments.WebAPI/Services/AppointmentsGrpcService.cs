@@ -50,7 +50,7 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
             throw new RpcException(new Status(StatusCode.InvalidArgument, "DoctorId and/or PatientId must be set and valid"));
 
         var generatedCode = await _appointmentCodeGeneratorService.GenerateAsync();
-        var appointment = new Appointment(request.PatientId, request.DoctorId, generatedCode, request.Notes);
+        var appointment = new Appointment(request.PatientId, request.DoctorId, generatedCode, request.Reason);
         var db = _mongoClient.GetDatabase("AppointmentsDb");
         var collection = db.GetCollection<Appointment>("Appointments");
 

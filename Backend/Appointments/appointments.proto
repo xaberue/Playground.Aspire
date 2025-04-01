@@ -39,9 +39,10 @@ message AppointmentDetailModel {
 	int32 patientId = 4;
 	string date = 5;
 	string box = 6;
-	string notes = 7;
-	optional int32 criticality = 8;
-	int32 status = 9;
+	string reason = 7;
+	string notes = 8;
+	optional int32 criticality = 9;
+	int32 status = 10;
 }
 
 message GetAllTodayAppointmentsRequest{ }
@@ -59,7 +60,7 @@ message AppointmentDetailsCollection{
 message CreateAppointmentRequest{ 
 	int32 patientId = 1;
 	int32 doctorId = 2;
-	string notes = 3;
+	string reason = 3;
 }
 
 message CreateAppointmentResponse{

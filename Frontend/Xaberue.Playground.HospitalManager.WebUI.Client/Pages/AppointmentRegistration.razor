@@ -46,8 +46,8 @@
             </div>
 
             <div>
-                <FluentTextArea Name="description" Rows=5 Cols=60 @bind-Value="creationModel.Notes" Label="Reason for visit" Required />
-                <FluentValidationMessage For="@(() => creationModel.Notes)" />
+                <FluentTextArea Name="reason" Rows=5 Cols=60 @bind-Value="creationModel.Reason" Label="Reason for visit" Required />
+                <FluentValidationMessage For="@(() => creationModel.Reason)" />
             </div>
 
             <div>
@@ -113,7 +113,7 @@
     {
         await AppointmentApiService.RegisterAsync(creationModel);
         ToastService.ShowSuccess("Appointment successfully registered");
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/appointments");
     }
 
 }

@@ -1,12 +1,12 @@
 ﻿using Grpc.Net.Client;
 using Xaberue.Playground.HospitalManager.Doctors;
-using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
+using Xaberue.Playground.HospitalManager.Doctors.Shared;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 using DoctorsGrpc = Xaberue.Playground.HospitalManager.Doctors.Doctors;
 
 namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
 
-public class DoctorGrpcApiClient : IDoctorQueryApiService
+public class DoctorGrpcApiClient : IDoctorApiClient
 {
 
     private readonly string _doctorsApiUrl;
@@ -17,6 +17,22 @@ public class DoctorGrpcApiClient : IDoctorQueryApiService
         _doctorsApiUrl = doctorsApiUrl;
     }
 
+
+    public async Task<DoctorDto?> GetAsync(int id, CancellationToken cancellationToken = default)
+    {
+        using var doctorsChannel = GrpcChannel.ForAddress(_doctorsApiUrl);
+
+        var doctorsClient = new DoctorsGrpc.DoctorsClient(doctorsChannel);
+        var response = await doctorsClient.GetDoctorByIdAsync(new GetDoctorByIdRequest { Id = id });
+
+        return new DoctorDto(
+            response.Doctor.Id,
+            response.Doctor.Name,
+            response.Doctor.Surname,
+            response.Doctor.BoxAssigned,
+            DateTime.Parse(response.Doctor.HiringDate)
+        );
+    }
 
     public async Task<IEnumerable<DoctorGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {
@@ -44,6 +60,7 @@ public class DoctorGrpcApiClient : IDoctorQueryApiService
                 $"{x.Name} {x.Surname}"
             ));
     }
+
 }
 
 //TODO: Extract mappers

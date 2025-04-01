@@ -57,7 +57,7 @@ public class AppointmentGrpcApiClient : IAppointmentQueryApiService
                 $"{patient.Name} {patient.Surname}",
                 DateTime.Parse(x.Date),
                 x.Box,
-                x.Notes,
+                x.Reason,
                 (x.Criticality >= 0) ? (CriticalityLevel)x.Criticality : null,
                 (AppointmentStatus)x.Status
             );

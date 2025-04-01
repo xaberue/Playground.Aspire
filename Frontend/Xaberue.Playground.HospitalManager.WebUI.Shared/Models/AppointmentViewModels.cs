@@ -4,7 +4,7 @@ using Xaberue.Playground.HospitalManager.Appointments.Shared;
 namespace Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 public record AppointmentGridViewModel
-    (string Id, string Code, int doctorId, string DoctorFullName, int patientId, string PatientFullName, DateTime Date, string? Box, string Notes, CriticalityLevel? Criticality, AppointmentStatus Status);
+    (string Id, string Code, int DoctorId, string DoctorFullName, int PatientId, string PatientFullName, DateTime Date, string? Box, string Reason, CriticalityLevel? Criticality, AppointmentStatus Status);
 
 public record AppointmentRegistrationViewModel
 {
@@ -13,5 +13,9 @@ public record AppointmentRegistrationViewModel
     [Required]
     public IEnumerable<DoctorSelectionViewModel> Doctors { get; set; } = Enumerable.Empty<DoctorSelectionViewModel>();
     [Required]
-    public string Notes { get; set; } = null!;
+    public string Reason { get; set; } = null!;
 }
+
+public record AppointmentAdmissionViewModel(string Id, int DoctorId);
+
+public record AppointmentCompletionViewModel(string Id, string Notes);

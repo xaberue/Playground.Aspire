@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -8,22 +9,21 @@ using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 
-public class AppointmentRegisteredProcessor : BackgroundService
+public class AppointmentAdmittedProcessor : BackgroundService
 {
 
     private readonly IConnection _rabbitMqConnection;
     private readonly IModel _rabbitMqChannel;
     private readonly IMongoClient _mongoDbClient;
-    private readonly AppointmentDailyCodeGeneratorService _appointmentDailyCodeGeneratorService;
-    private readonly ILogger<AppointmentRegisteredProcessor> _logger;
+    private readonly ILogger<AppointmentAdmittedProcessor> _logger;
 
 
-    public AppointmentRegisteredProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, AppointmentDailyCodeGeneratorService appointmentDailyCodeGeneratorService, ILogger<AppointmentRegisteredProcessor> logger)
+    public AppointmentAdmittedProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<AppointmentAdmittedProcessor> logger)
     {
         _rabbitMqConnection = rabbitMqConnection;
         _rabbitMqChannel = _rabbitMqConnection.CreateModel();
 
-        var deadLetterQueueName = $"{AppointmentsConstants.AppointmentRegistered}.DeadLetter";
+        var deadLetterQueueName = $"{AppointmentsConstants.AppointmentAdmitted}.DeadLetter";
         _rabbitMqChannel.QueueDeclare(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
         var mainQueueArguments = new Dictionary<string, object>
@@ -32,29 +32,28 @@ public class AppointmentRegisteredProcessor : BackgroundService
             { "x-dead-letter-routing-key", deadLetterQueueName }
         };
 
-        _rabbitMqChannel.QueueDeclare(queue: AppointmentsConstants.AppointmentRegistered, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
+        _rabbitMqChannel.QueueDeclare(queue: AppointmentsConstants.AppointmentAdmitted, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
 
         _mongoDbClient = mongoDbClient;
-        _appointmentDailyCodeGeneratorService = appointmentDailyCodeGeneratorService;
         _logger = logger;
     }
 
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("RabbitMQ {processor} started...", nameof(AppointmentRegisteredProcessor));
+        _logger.LogInformation("RabbitMQ {processor} started...", nameof(AppointmentAdmittedProcessor));
 
         var consumer = new EventingBasicConsumer(_rabbitMqChannel);
         consumer.Received += OnMessageReceived(stoppingToken);
 
-        _rabbitMqChannel.BasicConsume(queue: AppointmentsConstants.AppointmentRegistered, autoAck: false, consumer: consumer);
+        _rabbitMqChannel.BasicConsume(queue: AppointmentsConstants.AppointmentAdmitted, autoAck: false, consumer: consumer);
 
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(1000, stoppingToken);
         }
 
-        _logger.LogInformation("RabbitMQ {processor} stopped...", nameof(AppointmentRegisteredProcessor));
+        _logger.LogInformation("RabbitMQ {processor} stopped...", nameof(AppointmentAdmittedProcessor));
     }
 
 
@@ -64,7 +63,7 @@ public class AppointmentRegisteredProcessor : BackgroundService
         {
             if (stoppingToken.IsCancellationRequested)
             {
-                _logger.LogError("Cancellation requested. Stopping registration message processing.");
+                _logger.LogError("Cancellation requested. Stopping admission message processing.");
                 return;
             }
 
@@ -73,40 +72,43 @@ public class AppointmentRegisteredProcessor : BackgroundService
 
             try
             {
-                _logger.LogInformation("Received registration message: {message}", message);
-                var registrationDto = JsonSerializer.Deserialize<AppointmentRegistrationDto>(message);
+                _logger.LogInformation("Received admission message: {message}", message);
+                var admissionDto = JsonSerializer.Deserialize<AppointmentAdmissionDto>(message);
 
-                if (registrationDto is null)
-                    throw new InvalidOperationException("Invalid registration message content: Unable to deserialize.");
+                if (admissionDto is null)
+                    throw new InvalidOperationException("Invalid admission message content: Unable to deserialize.");
 
-                await ProcessAppointmentRegistration(registrationDto);
+                await ProcessAppointmentRegistration(admissionDto);
 
                 _rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing registration message: {message}", message);
+                _logger.LogError(ex, "Error processing admission message: {message}", message);
                 _rabbitMqChannel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
             }
         };
     }
 
-    private async Task ProcessAppointmentRegistration(AppointmentRegistrationDto registrationDto)
+    private async Task ProcessAppointmentRegistration(AppointmentAdmissionDto registrationDto)
     {
         try
         {
             var db = _mongoDbClient.GetDatabase("AppointmentsDb");
             var collection = db.GetCollection<Appointment>("Appointments");
-            var generatedCode = await _appointmentDailyCodeGeneratorService.GenerateAsync();
-            var appointment = new Appointment(registrationDto.PatientId, registrationDto.DoctorId, generatedCode, registrationDto.Reason);
+            var appointment = await collection.FindOneAndUpdateAsync<Appointment>(
+                Builders<Appointment>.Filter.Eq(a => a.Id, ObjectId.Parse(registrationDto.Id)),
+                Builders<Appointment>.Update.Combine(
+                    Builders<Appointment>.Update.Set(a => a.Status, AppointmentStatus.Admitted),
+                    Builders<Appointment>.Update.Set(a => a.Box, registrationDto.Box)
+                )
+            );
 
-            await collection.InsertOneAsync(appointment);
-
-            _logger.LogTrace("Appointment {id} successfully registered.", appointment.Id);
+            _logger.LogTrace("Appointment {id} successfully admitted.", registrationDto.Id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error inserting appointment into database: {message}", ex.Message);
+            _logger.LogError(ex, "Error updating appointment {id} into database: {message}", registrationDto.Id, ex.Message);
             throw;
         }
     }

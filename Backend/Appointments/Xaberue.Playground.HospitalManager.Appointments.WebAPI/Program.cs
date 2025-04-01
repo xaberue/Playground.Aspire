@@ -16,6 +16,7 @@ builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 builder.Services.AddSingleton<AppointmentDailyCodeGeneratorService>();
 
 builder.Services.AddHostedService<AppointmentRegisteredProcessor>();
+builder.Services.AddHostedService<AppointmentAdmittedProcessor>();
 
 var app = builder.Build();
 

@@ -6,6 +6,7 @@ package doctorsgrpc;
 
 service Doctors {
     rpc GetAll(GetAllDoctorsRequest) returns (GetAllDoctorsResponse);
+	rpc GetDoctorById(GetDoctorByIdRequest) returns (GetDoctorByIdResponse);
 }
 
 
@@ -13,11 +14,20 @@ message DoctorModel {
 	int32 id = 1;
 	string name = 2;
 	string surname = 3;
-	string hiring_date = 4;
+	string box_assigned = 4;
+	string hiring_date = 5;
 }
 
 message GetAllDoctorsRequest{ }
 
 message GetAllDoctorsResponse{
     repeated DoctorModel doctors = 1;
+}
+
+message GetDoctorByIdRequest{
+	int32 id = 1;
+}
+
+message GetDoctorByIdResponse{
+	DoctorModel doctor = 1;
 }

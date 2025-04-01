@@ -11,11 +11,13 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
 {
 
     private readonly IConnection _connection;
+    private readonly IDoctorApiClient _doctorApiClient;
 
 
-    public AppointmentRabbitClient(IConnection connection)
+    public AppointmentRabbitClient(IConnection connection, IDoctorApiClient doctorApiClient)
     {
         _connection = connection;
+        _doctorApiClient = doctorApiClient;
     }
 
 
@@ -27,7 +29,7 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
         {
             DoctorId = registrationViewModel.Doctors.First().Id,
             PatientId = registrationViewModel.Patients.First().Id,
-            Notes = registrationViewModel.Notes
+            Reason = registrationViewModel.Reason
         };
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
@@ -36,4 +38,32 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
 
         await Task.CompletedTask;
     }
+
+    public async Task AdmitAsync(AppointmentAdmissionViewModel admissionViewModel, CancellationToken cancellationToken = default)
+    {
+        using var channel = _connection.CreateModel();
+
+        var doctor = await _doctorApiClient.GetAsync(admissionViewModel.DoctorId, cancellationToken);
+        var messageModel = new AppointmentAdmissionDto(admissionViewModel.Id, doctor.BoxAssigned);
+        var messageModelSerialized = JsonSerializer.Serialize(messageModel);
+        var body = Encoding.UTF8.GetBytes(messageModelSerialized);
+
+        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentAdmitted, basicProperties: null, body: body);
+
+        await Task.CompletedTask;
+    }
+
+    public async Task CompleteAsync(AppointmentCompletionViewModel completionViewModel, CancellationToken cancellationToken = default)
+    {
+        using var channel = _connection.CreateModel();
+
+        var messageModel = new AppointmentCompletionDto(completionViewModel.Id, completionViewModel.Notes);
+        var messageModelSerialized = JsonSerializer.Serialize(messageModel);
+        var body = Encoding.UTF8.GetBytes(messageModelSerialized);
+
+        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentCompleted, basicProperties: null, body: body);
+
+        await Task.CompletedTask;
+    }
+
 }

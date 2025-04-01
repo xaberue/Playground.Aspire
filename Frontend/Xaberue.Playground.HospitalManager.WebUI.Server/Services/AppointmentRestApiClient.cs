@@ -44,7 +44,7 @@ public class AppointmentRestApiClient : IAppointmentQueryApiService
                 $"{patient.Name} {patient.Surname}",
                 DateTime.Parse(x.Date),
                 x.Box,
-                x.Notes,
+                x.Reason,
                 x.CriticalityLevel,
                 x.Status
             );

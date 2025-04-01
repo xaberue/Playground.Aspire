@@ -26,4 +26,16 @@ public class DoctorsGrpcService : Doctors.DoctorsBase
         return Task.FromResult(response);
     }
 
+    public override async Task<GetDoctorByIdResponse> GetDoctorById(GetDoctorByIdRequest request, ServerCallContext context)
+    {
+        var doctorEntity = await _dbContext.Doctors.FindAsync(request.Id);
+
+        if (doctorEntity is null)
+            throw new RpcException(new Status(StatusCode.NotFound, "Doctor not found"));
+
+        var response = new GetDoctorByIdResponse();
+        response.Doctor = doctorEntity.ToGrpcModel();
+
+        return response;
+    }
 }

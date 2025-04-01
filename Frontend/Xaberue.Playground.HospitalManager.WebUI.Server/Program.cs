@@ -64,6 +64,8 @@ if (grpcEnabled)
     builder.Services.AddScoped<IAppointmentQueryApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl, doctorsApiUrl, patientsApiUrl));
     builder.Services.AddScoped<IDoctorQueryApiService>(x => new DoctorGrpcApiClient(doctorsApiUrl));
     builder.Services.AddScoped<IPatientQueryApiService>(x => new PatientGrpcApiClient(patientsApiUrl));
+
+    builder.Services.AddScoped<IDoctorApiClient, DoctorGrpcApiClient>(x => new DoctorGrpcApiClient(doctorsApiUrl));
 }
 else
 {
@@ -91,6 +93,8 @@ else
     builder.Services.AddScoped<IAppointmentQueryApiService, AppointmentRestApiClient>();
     builder.Services.AddScoped<IPatientQueryApiService, PatientRestApiClient>();
     builder.Services.AddScoped<IDoctorQueryApiService, DoctorRestApiClient>();
+
+    builder.Services.AddScoped<IDoctorApiClient, DoctorRestApiClient>();
 }
 
 builder.Services.AddScoped<IAppointmentCommandApiService, AppointmentRabbitClient>();
@@ -169,7 +173,23 @@ group.MapPost("/appointment", async (IAppointmentCommandApiService appointmentSe
 
     return Results.Accepted();
 })
-.WithName("CreateAppointment");
+.WithName("RegisterAppointment");
+
+group.MapPut("/appointment/admit", async (IAppointmentCommandApiService appointmentService, AppointmentAdmissionViewModel admissionModel, CancellationToken cancellationToken) =>
+{
+    await appointmentService.AdmitAsync(admissionModel, cancellationToken);
+
+    return Results.Accepted();
+})
+.WithName("AdmitAppointment");
+
+group.MapPut("/appointment/complete", async (IAppointmentCommandApiService appointmentService, AppointmentCompletionViewModel completionModel, CancellationToken cancellationToken) =>
+{
+    await appointmentService.CompleteAsync(completionModel, cancellationToken);
+
+    return Results.Accepted();
+})
+.WithName("CompleteAppointment");
 
 //TODO: Extract mappings
 
