@@ -25,10 +25,10 @@ public class AppointmentRestApiClient : IAppointmentQueryApiService
         var doctorsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
 
-        var appointmentsReponse = await appointmentsClient.GetFromJsonAsync<AppointmentsDetailsDto>("/appointments/today");
+        var appointmentsReponse = await appointmentsClient.GetFromJsonAsync<AppointmentsDetailsDto>("/appointments/today", cancellationToken: cancellationToken);
         var appointments = appointmentsReponse?.Appointments ?? [];
-        var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors") ?? [];
-        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>($"/patients?ids={string.Join(',', appointments.Select(x => x.PatientId))}") ?? [];
+        var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors", cancellationToken: cancellationToken) ?? [];
+        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>($"/patients?ids={string.Join(',', appointments.Select(x => x.PatientId))}", cancellationToken: cancellationToken) ?? [];
 
         return appointments.Select(x =>
         {

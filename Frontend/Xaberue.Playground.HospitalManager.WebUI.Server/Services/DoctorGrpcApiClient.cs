@@ -23,7 +23,7 @@ public class DoctorGrpcApiClient : IDoctorApiClient
         using var doctorsChannel = GrpcChannel.ForAddress(_doctorsApiUrl);
 
         var doctorsClient = new DoctorsGrpc.DoctorsClient(doctorsChannel);
-        var response = await doctorsClient.GetDoctorByIdAsync(new GetDoctorByIdRequest { Id = id });
+        var response = await doctorsClient.GetDoctorByIdAsync(new GetDoctorByIdRequest { Id = id }, cancellationToken: cancellationToken);
 
         return new DoctorDto(
             response.Doctor.Id,
@@ -39,7 +39,7 @@ public class DoctorGrpcApiClient : IDoctorApiClient
         using var doctorsChannel = GrpcChannel.ForAddress(_doctorsApiUrl);
 
         var doctorsClient = new DoctorsGrpc.DoctorsClient(doctorsChannel);
-        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest());
+        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest(), cancellationToken: cancellationToken);
 
         return response.Doctors.Select(x => new DoctorGridViewModel(
                 x.Id,
@@ -53,7 +53,7 @@ public class DoctorGrpcApiClient : IDoctorApiClient
         using var doctorsChannel = GrpcChannel.ForAddress(_doctorsApiUrl);
 
         var doctorsClient = new DoctorsGrpc.DoctorsClient(doctorsChannel);
-        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest());
+        var response = await doctorsClient.GetAllAsync(new GetAllDoctorsRequest(), cancellationToken: cancellationToken);
 
         return response.Doctors.Select(x => new DoctorSelectionViewModel(
                 x.Id,

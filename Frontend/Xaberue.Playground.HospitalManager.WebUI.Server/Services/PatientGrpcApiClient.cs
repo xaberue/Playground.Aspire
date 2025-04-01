@@ -24,7 +24,7 @@ public class PatientGrpcApiClient : IPatientQueryApiService
         using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
 
         var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
+        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest(), cancellationToken: cancellationToken);
 
         return response.Patients.Select(x => new PatientGridViewModel(
                 x.Id,
@@ -42,7 +42,7 @@ public class PatientGrpcApiClient : IPatientQueryApiService
         var request = new GetPatientRequest { Code = code };
         try
         {
-            var response = await patientsClient.GetAsync(request);
+            var response = await patientsClient.GetAsync(request, cancellationToken: cancellationToken);
 
             return new PatientSelectionViewModel(
                     response.Patient.Id,
@@ -61,7 +61,7 @@ public class PatientGrpcApiClient : IPatientQueryApiService
         using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
 
         var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest());
+        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest(), cancellationToken: cancellationToken);
 
         return response.Patients.Select(x => new PatientSelectionViewModel(
                 x.Id,

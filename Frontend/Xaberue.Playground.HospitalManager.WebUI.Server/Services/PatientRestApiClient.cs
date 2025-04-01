@@ -20,7 +20,7 @@ public class PatientRestApiClient : IPatientQueryApiService
     public async Task<IEnumerable<PatientGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
-        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
+        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients", cancellationToken: cancellationToken) ?? [];
 
         return patients.Select(x => new PatientGridViewModel(
                 x.Id,
@@ -33,7 +33,7 @@ public class PatientRestApiClient : IPatientQueryApiService
     public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
     {
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
-        var response = await patientsClient.GetFromJsonAsync<PatientDto>($"/patient/{code}");
+        var response = await patientsClient.GetFromJsonAsync<PatientDto>($"/patient/{code}", cancellationToken: cancellationToken);
 
         return (response != null) ?
             new PatientSelectionViewModel(
@@ -46,7 +46,7 @@ public class PatientRestApiClient : IPatientQueryApiService
     public async Task<IEnumerable<PatientSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
-        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients") ?? [];
+        var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients", cancellationToken: cancellationToken) ?? [];
 
         return patients.Select(x => new PatientSelectionViewModel(
                 x.Id,

@@ -44,7 +44,7 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
         using var channel = _connection.CreateModel();
 
         var doctor = await _doctorApiClient.GetAsync(admissionViewModel.DoctorId, cancellationToken);
-        var messageModel = new AppointmentAdmissionDto(admissionViewModel.Id, doctor.BoxAssigned);
+        var messageModel = new AppointmentAdmissionDto(admissionViewModel.Id, doctor?.BoxAssigned ?? "Ask at reception desk");
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
