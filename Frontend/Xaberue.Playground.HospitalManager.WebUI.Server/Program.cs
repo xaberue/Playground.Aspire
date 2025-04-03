@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components;
@@ -22,7 +23,17 @@ var doctorsApiUrl = builder.Configuration.GetConnectionString("DoctorsApiUrl")
     ?? throw new ArgumentException("DoctorsApiUrl is mandatory");
 
 builder.AddServiceDefaults();
+
 builder.AddRedisOutputCache("cache");
+builder.AddRedisDistributedCache("cache");
+builder.Services.AddHybridCache(options =>
+{
+    options.DefaultEntryOptions = new HybridCacheEntryOptions
+    {
+        LocalCacheExpiration = TimeSpan.FromMinutes(5),
+        Expiration = TimeSpan.FromMinutes(2)
+    };
+});
 
 builder.Services.AddProblemDetails();
 
@@ -120,9 +131,15 @@ app.UseAntiforgery();
 
 var group = app.MapGroup("/api");
 
-group.MapGet("/doctors/grid", async (IDoctorQueryApiService doctorService) =>
+group.MapGet("/doctors/grid", async (HybridCache cache, IDoctorQueryApiService doctorService, CancellationToken cancellationToken) =>
 {
-    var data = await doctorService.GetAllGridModelsAsync();
+    var data = await cache.GetOrCreateAsync("DOCTORS-GRID", async entry =>
+    {
+        return await doctorService.GetAllGridModelsAsync(entry);
+    },
+    tags: ["DOCTORS-GRID"],
+    cancellationToken: cancellationToken
+    );
 
     return data;
 })

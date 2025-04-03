@@ -14,6 +14,7 @@
 
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
 		<PackageReference Include="Aspire.RabbitMQ.Client" />
+		<PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" />
 		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" />
 		<PackageReference Include="Google.Protobuf" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
@@ -25,6 +26,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />

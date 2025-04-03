@@ -1,9 +1,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis("cache");
+var cache = builder.AddRedis("cache").WithRedisInsight();
+
 var mssql = builder.AddSqlServer("hospital-manager-sql", port: 65379)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
+
 var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 52099)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();

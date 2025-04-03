@@ -12,6 +12,7 @@
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.1.0" />
     <PackageVersion Include="Aspire.MongoDB.Driver" Version="9.1.0" />
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="9.1.0" />
+    <PackageVersion Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.1.0" />
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.1.0" />
     <PackageVersion Include="ChustaSoft.Common" Version="2.10.0" />
     <PackageVersion Include="Google.Protobuf" Version="3.30.2" />
@@ -30,6 +31,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="9.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.1" />
