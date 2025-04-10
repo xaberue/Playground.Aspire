@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { AppointmentModel } from './appointment.model';
-import { AppointmentUpdatedModel } from './appointment-admission.model';
+import { AppointmentUpdatedModel } from './appointment-updated.model';
 
 @Injectable({
   providedIn: 'root',

@@ -13,11 +13,13 @@
 </section>
 
 <section class="appointments-entries">
-  <mat-card appearance="outlined" *ngFor="let appointment of appointments" class="appointment-card">
+  <mat-card appearance="outlined" *ngFor="let appointment of appointments"
+            class="appointment-card"
+            [ngClass]="{'highlight': appointment.highlighted}">
     <mat-card-content class="appointment-container">
-      <div class="appointment-code">{{appointment.code}}</div>
-      <div class="appointment-state">{{appointment.status}}</div>
-      <div class="appointment-box">{{appointment.box}}</div>
+      <div class="appointment-code">{{appointment.model.code}}</div>
+      <div class="appointment-state">{{appointment.model.status}}</div>
+      <div class="appointment-box">{{appointment.model.box}}</div>
     </mat-card-content>
   </mat-card>
 </section>

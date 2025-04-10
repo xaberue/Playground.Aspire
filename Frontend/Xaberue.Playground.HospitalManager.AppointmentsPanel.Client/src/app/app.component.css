@@ -58,3 +58,20 @@ mat-card {
 .appointment-box {
   text-align: right;
 }
+
+
+.highlight {
+  animation: blink-animation 2s ease-in-out;
+}
+
+@keyframes blink-animation {
+  0% {
+    background-color: dodgerblue;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: dodgerblue;
+  }
+}

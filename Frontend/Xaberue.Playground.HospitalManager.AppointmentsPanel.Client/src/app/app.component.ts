@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterOutlet } from '@angular/router';
 import { AppointmentModel } from './appointment.model';
 import { AppointmentApiService } from './appointment-api.service';
+import { AppointmentUpdatedModelEntry } from './appointment-updated.model';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { AppointmentApiService } from './appointment-api.service';
 export class AppComponent implements OnInit {
 
   title = 'AppointmentsPanel';
-  appointments: AppointmentModel[] = [];
+  private previousAppointments: AppointmentUpdatedModelEntry[] = [];
+  appointments: AppointmentUpdatedModelEntry[] = [];
 
   constructor(
     private appointmentService: AppointmentApiService)
@@ -23,11 +25,24 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.appointmentService.appointments$.subscribe(appointments => {
-      this.appointments = appointments;
+      const entries: AppointmentUpdatedModelEntry[] = [];
+      appointments.forEach(appointment => {
+        const isUpdatedOrCreated = !this.previousAppointments.some(
+          prev => prev.model.code === appointment.code && prev.model.status === appointment.status && prev.model.box === appointment.box
+        );
+        const entry = <AppointmentUpdatedModelEntry>{
+          model: appointment,
+          highlighted: isUpdatedOrCreated
+        };
+
+        entries.push(entry);
+      });
+
+      this.appointments = entries;
+      this.previousAppointments = this.appointments;
     });
 
     this.appointmentService.getAppointments();
-    
   }
 
 }
