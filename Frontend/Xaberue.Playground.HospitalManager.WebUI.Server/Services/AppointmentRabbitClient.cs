@@ -34,7 +34,7 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
-        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentRegistered, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: InfrastructureHelper.GetExchangeName(InfrastructureHelper.Constants.AppointmentRegistered), routingKey: "", basicProperties: null, body: body);
 
         await Task.CompletedTask;
     }
@@ -48,7 +48,7 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
-        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentAdmitted, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: InfrastructureHelper.GetExchangeName(InfrastructureHelper.Constants.AppointmentAdmitted), routingKey: "", basicProperties: null, body: body);
 
         await Task.CompletedTask;
     }
@@ -61,7 +61,7 @@ public class AppointmentRabbitClient : IAppointmentCommandApiService
         var messageModelSerialized = JsonSerializer.Serialize(messageModel);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
-        channel.BasicPublish(exchange: "", routingKey: AppointmentsConstants.AppointmentCompleted, basicProperties: null, body: body);
+        channel.BasicPublish(exchange: InfrastructureHelper.GetExchangeName(InfrastructureHelper.Constants.AppointmentCompleted), routingKey: "", basicProperties: null, body: body);
 
         await Task.CompletedTask;
     }

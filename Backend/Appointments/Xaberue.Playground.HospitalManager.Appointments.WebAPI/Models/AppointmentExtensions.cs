@@ -5,6 +5,7 @@ public static class AppointmentExtensions
     public static AppointmentSummaryModel ToSummaryGrpcModel(this Appointment appointment)
         => new()
         {
+            Id = appointment.Id.ToString(),
             Code = appointment.Code,
             Date = appointment.Date.ToString(),
             Box = string.IsNullOrWhiteSpace(appointment.Box) ? "-" : appointment.Box,

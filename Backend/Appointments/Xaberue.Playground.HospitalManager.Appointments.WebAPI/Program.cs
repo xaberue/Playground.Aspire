@@ -1,5 +1,9 @@
+using RabbitMQ.Client;
+using Xaberue.Playground.HospitalManager.Appointments.Shared;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
+using static Xaberue.Playground.HospitalManager.Appointments.Shared.InfrastructureHelper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,4 +36,7 @@ app.UseHttpsRedirection();
 
 app.MapGrpcService<AppointmentsGrpcService>();
 
+await app.SetUpRabbitMq();
+
 app.Run();
+

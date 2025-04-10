@@ -1,4 +1,4 @@
-export interface AppointmentModel {
+export interface AppointmentUpdatedModel {
   id: string;
   code: string;
   box: string;

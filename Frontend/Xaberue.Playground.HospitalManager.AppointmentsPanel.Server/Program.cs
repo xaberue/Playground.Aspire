@@ -1,4 +1,5 @@
 using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Configuration;
+using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Hubs;
 using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Services;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
 
@@ -12,8 +13,21 @@ var appointmentsPanelClientUrl = builder.Configuration["AppointmentsPanelClientU
 
 builder.AddServiceDefaults();
 
-builder.Services.AddCors();
+var AppointmentsPanelUIPolicyName = "AppointmentsPanelUIPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AppointmentsPanelUIPolicyName, policy =>
+    {
+        policy.WithOrigins(appointmentsPanelClientUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 builder.Services.AddOpenApi();
+
+builder.Services.AddSignalR();
 
 builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 
@@ -33,8 +47,12 @@ else
     builder.Services.AddScoped<IAppointmentApiService, AppointmentRestApiClient>();
 }
 
+builder.Services.AddHostedService<AppointmentUpdatedProcessor>();
 
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapDefaultEndpoints();
 
@@ -45,7 +63,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.WithOrigins(appointmentsPanelClientUrl).AllowAnyMethod().AllowAnyHeader());
+app.UseCors(AppointmentsPanelUIPolicyName);
 
 app.MapGet("/api/appointments/current", async (IAppointmentApiService appointmentsApiClient) =>
 {
@@ -53,5 +71,7 @@ app.MapGet("/api/appointments/current", async (IAppointmentApiService appointmen
 
     return Results.Ok(appointments);
 });
+
+app.MapHub<AppointmentHub>("hub/appointment-updated").RequireCors(AppointmentsPanelUIPolicyName);
 
 app.Run();

@@ -23,6 +23,7 @@ public class AppointmentRestApiClient : IAppointmentApiService
 
         return (appointments is null) ? [] : appointments.Appointments.Select(x =>
             new AppointmentSummaryViewModel(
+                x.Id,
                 x.Code,
                 DateTime.Parse(x.Date),
                 x.Box,

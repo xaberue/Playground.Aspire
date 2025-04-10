@@ -26,10 +26,11 @@ service Appointments {
 
 
 message AppointmentSummaryModel {
-	string code = 1;
-	string date = 2;
-	string box = 3;
-	int32 status = 4;
+	string id = 1;
+	string code = 2;
+	string date = 3;
+	string box = 4;
+	int32 status = 5;
 }
 
 message AppointmentDetailModel {

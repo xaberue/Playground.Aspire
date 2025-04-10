@@ -5,59 +5,20 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Base;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 
-public class AppointmentAdmittedProcessor : BackgroundService
+public class AppointmentAdmittedProcessor : RabbitMqBackgroundProcessor<AppointmentAdmittedProcessor>
 {
-
-    private readonly IConnection _rabbitMqConnection;
-    private readonly IModel _rabbitMqChannel;
-    private readonly IMongoClient _mongoDbClient;
-    private readonly ILogger<AppointmentAdmittedProcessor> _logger;
-
-
     public AppointmentAdmittedProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<AppointmentAdmittedProcessor> logger)
-    {
-        _rabbitMqConnection = rabbitMqConnection;
-        _rabbitMqChannel = _rabbitMqConnection.CreateModel();
-
-        var deadLetterQueueName = $"{AppointmentsConstants.AppointmentAdmitted}.DeadLetter";
-        _rabbitMqChannel.QueueDeclare(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-
-        var mainQueueArguments = new Dictionary<string, object>
-        {
-            { "x-dead-letter-exchange", "" },
-            { "x-dead-letter-routing-key", deadLetterQueueName }
-        };
-
-        _rabbitMqChannel.QueueDeclare(queue: AppointmentsConstants.AppointmentAdmitted, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
-
-        _mongoDbClient = mongoDbClient;
-        _logger = logger;
-    }
+        : base(rabbitMqConnection, mongoDbClient, logger, InfrastructureHelper.Constants.AppointmentAdmitted)
+    { }
 
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("RabbitMQ {processor} started...", nameof(AppointmentAdmittedProcessor));
-
-        var consumer = new EventingBasicConsumer(_rabbitMqChannel);
-        consumer.Received += OnMessageReceived(stoppingToken);
-
-        _rabbitMqChannel.BasicConsume(queue: AppointmentsConstants.AppointmentAdmitted, autoAck: false, consumer: consumer);
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Task.Delay(1000, stoppingToken);
-        }
-
-        _logger.LogInformation("RabbitMQ {processor} stopped...", nameof(AppointmentAdmittedProcessor));
-    }
-
-
-    private EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken)
+    protected override EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken)
     {
         return async (model, ea) =>
         {
@@ -78,7 +39,9 @@ public class AppointmentAdmittedProcessor : BackgroundService
                 if (admissionDto is null)
                     throw new InvalidOperationException("Invalid admission message content: Unable to deserialize.");
 
-                await ProcessAppointmentRegistration(admissionDto);
+                var appointment = await ProcessAppointmentRegistration(admissionDto);
+
+                PublishAppointmentUpdatedEvent(appointment);
 
                 _rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             }
@@ -90,7 +53,8 @@ public class AppointmentAdmittedProcessor : BackgroundService
         };
     }
 
-    private async Task ProcessAppointmentRegistration(AppointmentAdmissionDto registrationDto)
+
+    private async Task<Appointment> ProcessAppointmentRegistration(AppointmentAdmissionDto registrationDto)
     {
         try
         {
@@ -101,24 +65,22 @@ public class AppointmentAdmittedProcessor : BackgroundService
                 Builders<Appointment>.Update.Combine(
                     Builders<Appointment>.Update.Set(a => a.Status, AppointmentStatus.Admitted),
                     Builders<Appointment>.Update.Set(a => a.Box, registrationDto.Box)
-                )
+                ),
+                new FindOneAndUpdateOptions<Appointment>
+                {
+                    ReturnDocument = ReturnDocument.After
+                }
             );
 
             _logger.LogTrace("Appointment {id} successfully admitted.", registrationDto.Id);
+
+            return appointment;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating appointment {id} into database: {message}", registrationDto.Id, ex.Message);
             throw;
         }
-    }
-
-
-    public override void Dispose()
-    {
-        _rabbitMqChannel?.Close();
-        _rabbitMqConnection?.Close();
-        base.Dispose();
     }
 
 }

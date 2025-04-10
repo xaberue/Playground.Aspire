@@ -17,12 +17,17 @@ export class AppComponent implements OnInit {
   title = 'AppointmentsPanel';
   appointments: AppointmentModel[] = [];
 
-  constructor(private appointmentService: AppointmentApiService) { }
+  constructor(
+    private appointmentService: AppointmentApiService)
+  { }
 
   ngOnInit(): void {
-    this.appointmentService.getAppointments().subscribe(appointments => {
+    this.appointmentService.appointments$.subscribe(appointments => {
       this.appointments = appointments;
     });
+
+    this.appointmentService.getAppointments();
+    
   }
 
 }

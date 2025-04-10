@@ -35,17 +35,20 @@ var appointmentsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalMan
     .WaitFor(rabbitmq);
 
 builder.AddProject<Projects.Xaberue_Playground_HospitalManager_WebUI_Server>("hospital-manager-webui")
-    .WithReference(identityDb)
     .WithReference(cache)
     .WithReference(rabbitmq)
+    .WithReference(identityDb)
     .WaitFor(cache)
+    .WaitFor(rabbitmq)
     .WaitFor(identityDb)
     .WithEnvironment("ConnectionStrings__PatientsApiUrl", patientsApi.GetEndpoint("https"))
     .WithEnvironment("ConnectionStrings__DoctorsApiUrl", doctorsApi.GetEndpoint("https"));
 
 var appointmentsPanelServer = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_AppointmentsPanel_Server>("appointmentspanel-server")
     .WithEnvironment("ConnectionStrings__AppointmentsApiUrl", appointmentsApi.GetEndpoint("https"))
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WaitFor(rabbitmq)
+    .WaitFor(appointmentsApi);
 
 var appointmentsPanelClient = builder.AddNpmApp("appointmentspanel-client", "../../Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client")
     .WithReference(appointmentsPanelServer)
