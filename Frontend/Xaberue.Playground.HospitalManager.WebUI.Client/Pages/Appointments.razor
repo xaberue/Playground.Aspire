@@ -45,7 +45,6 @@ else
 
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
     private IEnumerable<AppointmentGridViewModel>? appointments;
-    private bool loading = true;
 
 
     protected override async Task OnInitializedAsync()
@@ -63,5 +62,7 @@ else
     {
         appointments = await AppointmentsApiQueryService.GetAllToday();
     }
+
+    //TODO: Update this grid via SignalR as well
 
 }
