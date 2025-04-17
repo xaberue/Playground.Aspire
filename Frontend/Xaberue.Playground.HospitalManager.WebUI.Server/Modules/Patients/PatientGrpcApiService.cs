@@ -1,30 +1,29 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
+using RabbitMQ.Client;
 using Xaberue.Playground.HospitalManager.Patients;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Base;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 using PatientsGrpc = Xaberue.Playground.HospitalManager.Patients.Patients;
 
-namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+namespace Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Patients;
 
-public class PatientGrpcApiClient : IPatientQueryApiService
+public class PatientGrpcApiService : IPatientQueryApiService
 {
 
-    private readonly string _patientsApiUrl;
+    private readonly PatientGrpcApiClient _patientGrpcApiClient;
 
 
-    public PatientGrpcApiClient(String patientsApiUrl)
+    public PatientGrpcApiService(PatientGrpcApiClient patientGrpcApiClient) 
     {
-        _patientsApiUrl = patientsApiUrl;
+        _patientGrpcApiClient = patientGrpcApiClient;
     }
 
 
     public async Task<IEnumerable<PatientGridViewModel>> GetAllGridModelsAsync(CancellationToken cancellationToken = default)
     {
-        using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
-
-        var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest(), cancellationToken: cancellationToken);
+        var response = await _patientGrpcApiClient.GetAllAsync(cancellationToken);
 
         return response.Patients.Select(x => new PatientGridViewModel(
                 x.Id,
@@ -36,13 +35,9 @@ public class PatientGrpcApiClient : IPatientQueryApiService
 
     public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
     {
-        using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
-
-        var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
-        var request = new GetPatientRequest { Code = code };
         try
         {
-            var response = await patientsClient.GetAsync(request, cancellationToken: cancellationToken);
+            var response = await _patientGrpcApiClient.GetAsync(code, cancellationToken);
 
             return new PatientSelectionViewModel(
                     response.Patient.Id,
@@ -58,10 +53,7 @@ public class PatientGrpcApiClient : IPatientQueryApiService
 
     public async Task<IEnumerable<PatientSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
-        using var patientsChannel = GrpcChannel.ForAddress(_patientsApiUrl);
-
-        var patientsClient = new PatientsGrpc.PatientsClient(patientsChannel);
-        var response = await patientsClient.GetAllAsync(new GetAllPatientsRequest(), cancellationToken: cancellationToken);
+        var response = await _patientGrpcApiClient.GetAllAsync(cancellationToken);
 
         return response.Patients.Select(x => new PatientSelectionViewModel(
                 x.Id,

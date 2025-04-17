@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
 var appointmentsApiUrl = builder.Configuration.GetConnectionString("AppointmentsApiUrl")
     ?? throw new ArgumentException("AppointmentsApiUrl is mandatory");
+var appointmentsApiKey = builder.Configuration["Auth:AppointmentsApiKey"]
+    ?? throw new ArgumentException("AppointmentsApiKey is mandatory");
 var appointmentsPanelClientUrl = builder.Configuration["AppointmentsPanelClientUrl"]
     ?? throw new ArgumentException("AppointmentsApiUrl is mandatory");
 
@@ -33,7 +35,7 @@ builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
 
 if (grpcEnabled)
 {
-    builder.Services.AddScoped<IAppointmentApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl));
+    builder.Services.AddScoped<IAppointmentApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl, appointmentsApiKey));
 }
 else
 {
@@ -42,6 +44,10 @@ else
     client =>
     {
         client.BaseAddress = new Uri(appointmentsApiUrl);
+    })
+    .ConfigureHttpClient((serviceProvider, client) =>
+    {
+        client.DefaultRequestHeaders.Add("X-ApiKey", builder.Configuration["Auth:AppointmentsApiKey"]!);
     });
 
     builder.Services.AddScoped<IAppointmentApiService, AppointmentRestApiClient>();

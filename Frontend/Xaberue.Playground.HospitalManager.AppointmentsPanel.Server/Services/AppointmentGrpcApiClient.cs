@@ -1,4 +1,7 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
+using RabbitMQ.Client;
+using System.Reflection.PortableExecutable;
 using Xaberue.Playground.HospitalManager.Appointments;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Models;
@@ -10,11 +13,13 @@ public class AppointmentGrpcApiClient : IAppointmentApiService
 {
 
     private readonly string _appointmentsApiUrl;
+    private readonly string _appointmentsApiKey;
 
 
-    public AppointmentGrpcApiClient(String appointmentsApiUrl)
+    public AppointmentGrpcApiClient(string appointmentsApiUrl, string appointmentsApiKey)
     {
         _appointmentsApiUrl = appointmentsApiUrl;
+        _appointmentsApiKey = appointmentsApiKey;
     }
 
 
@@ -22,8 +27,10 @@ public class AppointmentGrpcApiClient : IAppointmentApiService
     {
         using var appointmentsChannel = GrpcChannel.ForAddress(_appointmentsApiUrl);
 
+        var headers = new Metadata();
+        headers.Add("X-ApiKey", _appointmentsApiKey);
         var appointmentClient = new AppointmentsGrpc.AppointmentsClient(appointmentsChannel);
-        var response = await appointmentClient.GetAllCurrentActiveAsync(new GetAllCurrentActiveAppointmentsRequest());
+        var response = await appointmentClient.GetAllCurrentActiveAsync(new GetAllCurrentActiveAppointmentsRequest(), headers: headers, cancellationToken: cancellationToken);
 
         return response.Appointments.Select(x =>
             new AppointmentSummaryViewModel(

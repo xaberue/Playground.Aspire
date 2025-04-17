@@ -1,3 +1,4 @@
+using ChustaSoft.Auth.ApiKey;
 using Microsoft.EntityFrameworkCore;
 using Xaberue.Playground.HospitalManager.Patients.Shared;
 using Xaberue.Playground.HospitalManager.Patients.WebAPI.Infrastructure;
@@ -8,6 +9,9 @@ using Xaberue.Playground.HospitalManager.ServiceDefaults;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.ConfigureApiKeyAuthentication((token)
+    => { return token == builder.Configuration["Auth:ApiKeyToken"]!; });
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
@@ -30,6 +34,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGrpcService<PatientsGrpcService>();
 
 app.MapGet("/patient/{code}", async (PatientsDbContext db, string code) =>
@@ -41,7 +48,7 @@ app.MapGet("/patient/{code}", async (PatientsDbContext db, string code) =>
     }
 
     return Results.Ok(patient.ToDto());
-});
+}).RequireAuthorization();
 
 app.MapGet("/patients", (HttpContext context, PatientsDbContext db) =>
 {
@@ -64,7 +71,8 @@ app.MapGet("/patients", (HttpContext context, PatientsDbContext db) =>
     }
 
     return Results.Ok(patients);
-});
-
+}).RequireAuthorization();
 
 app.Run();
+
+//TODO: Auth for gRPC API

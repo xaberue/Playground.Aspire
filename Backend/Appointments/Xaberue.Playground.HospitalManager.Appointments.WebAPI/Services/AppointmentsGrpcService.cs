@@ -1,10 +1,13 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using MongoDB.Driver;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 
+
+[Authorize]
 public class AppointmentsGrpcService : Appointments.AppointmentsBase
 {
 

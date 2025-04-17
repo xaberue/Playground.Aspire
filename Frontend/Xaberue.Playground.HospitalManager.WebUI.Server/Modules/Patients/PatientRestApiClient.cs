@@ -3,7 +3,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
-namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+namespace Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Patients;
 
 public class PatientRestApiClient : IPatientQueryApiService
 {
@@ -35,7 +35,7 @@ public class PatientRestApiClient : IPatientQueryApiService
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
         var response = await patientsClient.GetFromJsonAsync<PatientDto>($"/patient/{code}", cancellationToken: cancellationToken);
 
-        return (response != null) ?
+        return response != null ?
             new PatientSelectionViewModel(
                 response.Id,
                 response.Code,

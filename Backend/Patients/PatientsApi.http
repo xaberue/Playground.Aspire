@@ -3,17 +3,20 @@
 
 GET {{Patients.WebAPI_HostAddress}}/patient/P087
 Accept: application/json
+X-ApiKey: Test_ApiKey
 
 ###
 
 
 GET {{Patients.WebAPI_HostAddress}}/patients
 Accept: application/json
+X-ApiKey: Test_ApiKey
 
 ###
 
 
 GET {{Patients.WebAPI_HostAddress}}/patients?ids=3,5,9
 Accept: application/json
+X-ApiKey: Test_ApiKey
 
 ###

@@ -5,7 +5,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
-namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+namespace Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Appointments;
 
 public class AppointmentRestApiClient : IAppointmentQueryApiService
 {

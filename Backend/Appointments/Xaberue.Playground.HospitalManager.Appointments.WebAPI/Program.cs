@@ -1,3 +1,4 @@
+using ChustaSoft.Auth.ApiKey;
 using RabbitMQ.Client;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
@@ -8,6 +9,9 @@ using static Xaberue.Playground.HospitalManager.Appointments.Shared.Infrastructu
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.ConfigureApiKeyAuthentication((token)
+    => { return token == builder.Configuration["Auth:ApiKeyToken"]!; });
 
 builder.Services.AddOpenApi();
 
@@ -34,9 +38,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGrpcService<AppointmentsGrpcService>();
 
 await app.SetUpRabbitMq();
 
 app.Run();
 
+//TODO: Auth for gRPC API

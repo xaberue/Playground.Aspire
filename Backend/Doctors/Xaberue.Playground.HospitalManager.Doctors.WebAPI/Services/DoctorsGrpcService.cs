@@ -1,9 +1,12 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Infrastructure;
 using Xaberue.Playground.HospitalManager.Doctors.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Doctors.WebAPI.Services;
 
+
+[Authorize]
 public class DoctorsGrpcService : Doctors.DoctorsBase
 {
 

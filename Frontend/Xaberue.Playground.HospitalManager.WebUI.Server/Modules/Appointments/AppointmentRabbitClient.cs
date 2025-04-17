@@ -2,10 +2,11 @@
 using System.Text;
 using System.Text.Json;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Doctors;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
-namespace Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+namespace Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Appointments;
 
 public class AppointmentRabbitClient : IAppointmentCommandApiService
 {

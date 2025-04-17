@@ -8,19 +8,29 @@ using Xaberue.Playground.HospitalManager.WebUI.Server.Components;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components.Account;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Data;
-using Xaberue.Playground.HospitalManager.WebUI.Server.Services;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Appointments;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Doctors;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Patients;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts;
 using Xaberue.Playground.HospitalManager.WebUI.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var grpcEnabled = bool.Parse(builder.Configuration["EnableGrpc"]!);
+
 var appointmentsApiUrl = builder.Configuration.GetConnectionString("AppointmentsApiUrl")
     ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
 var patientsApiUrl = builder.Configuration.GetConnectionString("PatientsAPIUrl")
     ?? throw new ArgumentException("PatientsAPIUrl is mandatory");
 var doctorsApiUrl = builder.Configuration.GetConnectionString("DoctorsApiUrl")
     ?? throw new ArgumentException("DoctorsApiUrl is mandatory");
+
+var appointmentsApiKey = builder.Configuration["Auth:AppointmentsApiKey"]
+    ?? throw new ArgumentException("AppointmentsApiKey is mandatory");
+var patientsApiKey = builder.Configuration["Auth:PatientsApiKey"]
+    ?? throw new ArgumentException("PatientsApiKey is mandatory");
+var doctorsApiKey = builder.Configuration["Auth:DoctorsApiKey"]
+    ?? throw new ArgumentException("DoctorsApiKey is mandatory");
 
 builder.AddServiceDefaults();
 
@@ -71,12 +81,15 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 if (grpcEnabled)
 {
-    //TODO: Improve that, isolate the gRPC client creation
-    builder.Services.AddScoped<IAppointmentQueryApiService>(x => new AppointmentGrpcApiClient(appointmentsApiUrl, doctorsApiUrl, patientsApiUrl));
-    builder.Services.AddScoped<IDoctorQueryApiService>(x => new DoctorGrpcApiClient(doctorsApiUrl));
-    builder.Services.AddScoped<IPatientQueryApiService>(x => new PatientGrpcApiClient(patientsApiUrl));
+    builder.Services.AddScoped(x => new AppointmentGrpcApiClient(appointmentsApiUrl, appointmentsApiKey));
+    builder.Services.AddScoped(x => new DoctorGrpcApiClient(doctorsApiUrl, doctorsApiKey));
+    builder.Services.AddScoped(x => new PatientGrpcApiClient(patientsApiUrl, patientsApiKey));
 
-    builder.Services.AddScoped<IDoctorApiClient, DoctorGrpcApiClient>(x => new DoctorGrpcApiClient(doctorsApiUrl));
+    builder.Services.AddScoped<IAppointmentQueryApiService, AppointmentGrpcApiService>();
+    builder.Services.AddScoped<IDoctorQueryApiService, DoctorGrpcApiService>();
+    builder.Services.AddScoped<IPatientQueryApiService, PatientGrpcApiService>();
+
+    builder.Services.AddScoped<IDoctorApiClient, DoctorGrpcApiService>();
 }
 else
 {
@@ -85,6 +98,11 @@ else
         client =>
         {
             client.BaseAddress = new Uri(appointmentsApiUrl);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("HospitalManager-WebUI");
+        })
+        .ConfigureHttpClient((serviceProvider, client) =>
+        {
+            client.DefaultRequestHeaders.Add("X-ApiKey", appointmentsApiKey);
         });
 
     builder.Services.AddHttpClient(
@@ -92,6 +110,11 @@ else
         client =>
         {
             client.BaseAddress = new Uri(patientsApiUrl);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("HospitalManager-WebUI");
+        })
+        .ConfigureHttpClient((serviceProvider, client) =>
+        {
+            client.DefaultRequestHeaders.Add("X-ApiKey", patientsApiKey);
         });
 
     builder.Services.AddHttpClient(
@@ -99,6 +122,11 @@ else
         client =>
         {
             client.BaseAddress = new Uri(doctorsApiUrl);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("HospitalManager-WebUI");
+        })
+        .ConfigureHttpClient((serviceProvider, client) =>
+        {
+            client.DefaultRequestHeaders.Add("X-ApiKey", doctorsApiKey);
         });
 
     builder.Services.AddScoped<IAppointmentQueryApiService, AppointmentRestApiClient>();

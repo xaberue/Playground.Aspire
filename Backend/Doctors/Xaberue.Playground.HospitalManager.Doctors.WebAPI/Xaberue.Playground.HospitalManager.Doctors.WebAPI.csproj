@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="ChustaSoft.Auth.ApiKey" />
 		<PackageReference Include="Grpc.AspNetCore" />
 		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
