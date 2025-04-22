@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+option csharp_namespace = "Xaberue.Playground.HospitalManager.Appointments";
+import "google/api/annotations.proto";
+
+package appointmentsgrpc;
+
+service Appointments {
+    rpc GetAllToday(GetAllTodayAppointmentsRequest) returns (AppointmentDetailsCollection){
+		option (google.api.http) = {
+			get: "/appointments/today"
+		};
+	}
+    rpc GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest) returns (AppointmentSummariesCollection){
+		option (google.api.http) = {
+			get: "/appointments/current"
+		};
+	}
+    rpc Create(CreateAppointmentRequest) returns (CreateAppointmentResponse){
+		option (google.api.http) = {
+			post: "/appointment",
+			body: "*"
+		};
+	}
+}
+
+
+message AppointmentSummaryModel {
+	string id = 1;
+	string code = 2;
+	string date = 3;
+	string box = 4;
+	int32 status = 5;
+}
+
+message AppointmentDetailModel {
+	string id = 1;
+	string code = 2;
+	int32 doctorId = 3;
+	int32 patientId = 4;
+	string date = 5;
+	string box = 6;
+	string reason = 7;
+	string notes = 8;
+	optional int32 criticality = 9;
+	int32 status = 10;
+}
+
+message GetAllTodayAppointmentsRequest{ }
+
+message GetAllCurrentActiveAppointmentsRequest{ }
+
+message AppointmentSummariesCollection{
+    repeated AppointmentSummaryModel appointments = 1;
+}
+
+message AppointmentDetailsCollection{
+    repeated AppointmentDetailModel appointments = 1;
+}
+
+message CreateAppointmentRequest{ 
+	int32 patientId = 1;
+	int32 doctorId = 2;
+	string reason = 3;
+}
+
+message CreateAppointmentResponse{
+    AppointmentSummaryModel appointment = 1;
+}

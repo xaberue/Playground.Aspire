@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IncludeHttpRuleProtos>true</IncludeHttpRuleProtos>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.WebUI.Client\Xaberue.Playground.HospitalManager.WebUI.Client.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.WebUI.Shared\Xaberue.Playground.HospitalManager.WebUI.Shared.csproj" />
+
+		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Aspire.RabbitMQ.Client" />
+		<PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" />
+		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" />
+		<PackageReference Include="Google.Protobuf" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Grpc.Net.Client" />
+		<PackageReference Include="Grpc.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="..\..\Backend\Appointments\appointments.proto" GrpcServices="Client" />
+		<Protobuf Include="..\..\Backend\Doctors\doctors.proto" GrpcServices="Client" />
+		<Protobuf Include="..\..\Backend\Patients\patients.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+</Project>

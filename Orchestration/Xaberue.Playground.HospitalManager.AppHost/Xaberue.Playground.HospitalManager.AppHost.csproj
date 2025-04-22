@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>de0421e2-5b5f-4724-b074-75178c9e45d0</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Backend\Appointments\Xaberue.Playground.HospitalManager.Appointments.WebAPI\Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Backend\Patients\Xaberue.Playground.HospitalManager.Patients.WebAPI\Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
+		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.csproj" />
+		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
+
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.MongoDB" />
+		<PackageReference Include="Aspire.Hosting.NodeJs" />
+		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
+		<PackageReference Include="Aspire.Hosting.Redis" />
+		<PackageReference Include="Aspire.Hosting.SqlServer" />
+	</ItemGroup>
+
+	<Target Name="RestoreNpm" BeforeTargets="Build" Condition=" '$(DesignTimeBuild)' != 'true' ">
+		<ItemGroup>
+			<PackageJsons Include="..\..\Frontend\*\package.json" />
+		</ItemGroup>
+
+		<Message Importance="Normal" Text="Installing npm packages for %(PackageJsons.RelativeDir)" Condition="!Exists('%(PackageJsons.RootDir)%(PackageJsons.Directory)/node_modules')" />
+		<Exec Command="npm install" WorkingDirectory="%(PackageJsons.RootDir)%(PackageJsons.Directory)" Condition="!Exists('%(PackageJsons.RootDir)%(PackageJsons.Directory)/node_modules')" />
+	</Target>
+	
+</Project>

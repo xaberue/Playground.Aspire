@@ -1,0 +1,77 @@
+header {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+h1 {
+  text-align: center;
+}
+
+mat-card {
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.appointments-header,
+.appointments-entries {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.header-container,
+.appointment-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.header-card {
+  background-color: #004d99;
+  color: white;
+  font-weight: bold;
+}
+
+.header-code,
+.header-state,
+.header-box,
+.appointment-code,
+.appointment-state,
+.appointment-box {
+  flex: 1;
+}
+
+.header-code,
+.appointment-code {
+  text-align: left;
+}
+
+.header-state,
+.appointment-state {
+  text-align: center;
+}
+
+.header-box,
+.appointment-box {
+  text-align: right;
+}
+
+
+.highlight {
+  animation: blink-animation 2s ease-in-out;
+}
+
+@keyframes blink-animation {
+  0% {
+    background-color: dodgerblue;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: dodgerblue;
+  }
+}

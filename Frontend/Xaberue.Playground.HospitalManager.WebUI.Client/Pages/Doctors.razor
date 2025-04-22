@@ -1,0 +1,45 @@
+﻿@page "/doctors"
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+@using Xaberue.Playground.HospitalManager.WebUI.Client.Services
+@using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
+
+@inject IDoctorQueryApiService DoctorsApiService
+@inject NavigationManager Navigation
+
+
+<PageTitle>Doctors</PageTitle>
+
+<h1>Doctors</h1>
+
+<p>These are all the doctors that are working on this hospital...</p>
+
+@if (doctors is null)
+{
+    <FluentProgressRing></FluentProgressRing>
+}
+else
+{
+    <FluentDataGrid Id="doctorsGrid" Items="@doctors.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="DoctorGridViewModel" Pagination="@pagination">
+        <PropertyColumn Title="Id" Property="@(c => c!.Id)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Full Name" Property="@(c => c.FullName)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Hiring Date" Property="@(c => c!.HiringDate.ToShortDateString())" Sortable="true" Align="Align.End" />
+    </FluentDataGrid>
+
+    <FluentPaginator State="@pagination" />
+}
+
+
+@code {
+
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    private IEnumerable<DoctorGridViewModel>? doctors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        doctors = await DoctorsApiService.GetAllGridModelsAsync();
+    }
+
+}

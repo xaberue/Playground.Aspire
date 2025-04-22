@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="ChustaSoft.Auth.ApiKey" />
+		<PackageReference Include="Grpc.AspNetCore" />
+		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Orchestration\Xaberue.Playground.HospitalManager.ServiceDefaults\Xaberue.Playground.HospitalManager.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Xaberue.Playground.HospitalManager.Doctors.Shared\Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Protobuf Include="..\doctors.proto" GrpcServices="Server" />
+	</ItemGroup>
+
+</Project>

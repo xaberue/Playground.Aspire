@@ -1,0 +1,27 @@
+<header>
+  <h1>Hospital's Appointments</h1>
+</header>
+
+<section class="appointments-header">
+  <mat-card appearance="outlined" class="header-card">
+    <mat-card-content class="header-container">
+      <div class="header-code">Code</div>
+      <div class="header-state">State</div>
+      <div class="header-box">Box</div>
+    </mat-card-content>
+  </mat-card>
+</section>
+
+<section class="appointments-entries">
+  <mat-card appearance="outlined" *ngFor="let appointment of appointments"
+            class="appointment-card"
+            [ngClass]="{'highlight': appointment.highlighted}">
+    <mat-card-content class="appointment-container">
+      <div class="appointment-code">{{appointment.model.code}}</div>
+      <div class="appointment-state">{{appointment.model.status}}</div>
+      <div class="appointment-box">{{appointment.model.box}}</div>
+    </mat-card-content>
+  </mat-card>
+</section>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,119 @@
+﻿@page "/appointment-registration"
+@rendermode InteractiveAuto
+
+@using Xaberue.Playground.HospitalManager.WebUI.Client.Services
+@using Xaberue.Playground.HospitalManager.WebUI.Shared
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
+@using Xaberue.Playground.HospitalManager.WebUI.Shared.Models
+
+
+@if (doctors != null)
+{
+    <EditForm Model="@creationModel" OnValidSubmit="HandleOnValidSubmitAsync" FormName="appointmentCreationForm">
+        <DataAnnotationsValidator />
+        <FluentValidationSummary />
+
+        <FluentStack Orientation="Orientation.Vertical">
+
+            <div>
+                <FluentAutocomplete TOption="PatientSelectionViewModel"
+                Name="patients"
+                AutoComplete="off"
+                Label="Find the patient by its code"
+                Width="250px"
+                Placeholder="Introduce patient's code"
+                OnOptionsSearch="@OnSearchPatientAsync"
+                OptionText="@(item => item.FullName)"
+                Multiple="true"
+                MaximumSelectedOptions="1"
+                @bind-SelectedOptions="@creationModel.Patients" />
+                <FluentValidationMessage For="@(() => creationModel.Patients)" />
+            </div>
+
+            <div>
+                <FluentAutocomplete TOption="DoctorSelectionViewModel"
+                Name="doctors"
+                AutoComplete="off"
+                Label="Select doctor"
+                Width="250px"
+                Placeholder="Select doctor"
+                OnOptionsSearch="@OnSearchDoctor"
+                OptionText="@(item => item.FullName)"
+                Multiple="true"
+                MaximumSelectedOptions="1"
+                @bind-SelectedOptions="@creationModel.Doctors" />
+                <FluentValidationMessage For="@(() => creationModel.Doctors)" />
+            </div>
+
+            <div>
+                <FluentTextArea Name="reason" Rows=5 Cols=60 @bind-Value="creationModel.Reason" Label="Reason for visit" Required />
+                <FluentValidationMessage For="@(() => creationModel.Reason)" />
+            </div>
+
+            <div>
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
+            </div>
+        </FluentStack>
+    </EditForm>
+}
+
+
+@code {
+
+    IEnumerable<DoctorSelectionViewModel> doctors = Enumerable.Empty<DoctorSelectionViewModel>();
+
+    AppointmentRegistrationViewModel creationModel = new AppointmentRegistrationViewModel();
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject]
+    public IToastService ToastService { get; set; } = null!;
+
+    [Inject]
+    public IDoctorQueryApiService DoctorsApiService { get; set; } = null!;
+
+    [Inject]
+    public IPatientQueryApiService PatientsApiService { get; set; } = null!;
+
+    [Inject]
+    public IAppointmentCommandApiService AppointmentApiService { get; set; } = null!;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        doctors = await DoctorsApiService.GetAllSelectionModelsAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+
+    private async Task OnSearchPatientAsync(OptionsSearchEventArgs<PatientSelectionViewModel> searchEvent)
+    {
+        if (searchEvent.Text.Length >= 4)
+        {
+            var patient = await PatientsApiService.GetSelectionModelAsync(searchEvent.Text);
+
+            if (patient != null)
+                searchEvent.Items = [patient];
+        }
+    }
+
+    private void OnSearchDoctor(OptionsSearchEventArgs<DoctorSelectionViewModel> searchEvent)
+    {
+        searchEvent.Items = doctors
+            .Where(i => i.FullName.Contains(searchEvent.Text, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(i => i.FullName);
+    }
+
+    private async Task HandleOnValidSubmitAsync()
+    {
+        await AppointmentApiService.RegisterAsync(creationModel);
+        ToastService.ShowSuccess("Appointment successfully registered");
+        NavigationManager.NavigateTo("/appointments");
+    }
+
+}
