@@ -75,4 +75,3 @@ app.MapGet("/patients", (HttpContext context, PatientsDbContext db) =>
 
 app.Run();
 
-//TODO: Auth for gRPC API

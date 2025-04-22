@@ -56,5 +56,3 @@ app.MapGet("/doctor/{id}", async (DoctorsDbContext db, int id) =>
 }).RequireAuthorization();
 
 app.Run();
-
-//TODO: Auth for gRPC API

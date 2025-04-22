@@ -47,4 +47,3 @@ await app.SetUpRabbitMq();
 
 app.Run();
 
-//TODO: Auth for gRPC API

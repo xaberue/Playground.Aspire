@@ -49,6 +49,3 @@ public class AppointmentGrpcApiService : IAppointmentQueryApiService
         });
     }
 }
-
-
-//TODO: GrpcApiClient will have no interface
