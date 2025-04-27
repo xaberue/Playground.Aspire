@@ -138,6 +138,7 @@ else
 
 builder.Services.AddScoped<IAppointmentCommandApiService, AppointmentRabbitClient>();
 
+builder.Services.AddHostedService<DbMigrationsService>();
 
 var app = builder.Build();
 
