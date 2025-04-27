@@ -1,6 +1,8 @@
 ﻿@page "/patients"
+@attribute [Authorize]
 @rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
+@using Microsoft.AspNetCore.Authorization
 @using Xaberue.Playground.HospitalManager.WebUI.Client.Services
 @using Xaberue.Playground.HospitalManager.WebUI.Shared
 @using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
@@ -12,25 +14,27 @@
 
 <PageTitle>Patients</PageTitle>
 
-<h1>Patients</h1>
+<AuthorizeView Context="authContext">
+    <h1>Patients</h1>
 
-<p>These are all the patients that this hospital gives service...</p>
+    <p>These are all the patients that this hospital gives service...</p>
 
-@if (patients is null)
-{
-    <FluentProgressRing></FluentProgressRing>
-}
-else
-{
-    <FluentDataGrid Id="patientsGrid" Items="@patients.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="PatientGridViewModel" Pagination="@pagination">
-        <PropertyColumn Title="Id" Property="@(c => c!.Id)" Sortable="true" Align="Align.Start" />
-        <PropertyColumn Title="Code" Property="@(c => c!.Code)" Sortable="true" Align="Align.Start" />
-        <PropertyColumn Title="Full Name" Property="@(c => c.FullName)" Sortable="true" Align="Align.Start" />
-        <PropertyColumn Title="Hiring Date" Property="@(c => c!.DateOfBirth.ToShortDateString())" Sortable="true" Align="Align.End" />
-    </FluentDataGrid>
+    @if (patients is null)
+    {
+        <FluentProgressRing></FluentProgressRing>
+    }
+    else
+    {
+        <FluentDataGrid Id="patientsGrid" Items="@patients.AsQueryable()" GridTemplateColumns="1fr 1fr 1fr 2fr" TGridItem="PatientGridViewModel" Pagination="@pagination">
+            <PropertyColumn Title="Id" Property="@(c => c!.Id)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Code" Property="@(c => c!.Code)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Full Name" Property="@(c => c.FullName)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Hiring Date" Property="@(c => c!.DateOfBirth.ToShortDateString())" Sortable="true" Align="Align.End" />
+        </FluentDataGrid>
 
-    <FluentPaginator State="@pagination" />
-}
+        <FluentPaginator State="@pagination" />
+    }
+</AuthorizeView>
 
 
 @code {

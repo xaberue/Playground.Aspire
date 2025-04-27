@@ -1,25 +1,30 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @rendermode InteractiveAuto
 
 
 <PageTitle>Home</PageTitle>
 
-<FluentHeader>
-    <h1>Welcome to xaberue's Hospital Manager</h1>
-</FluentHeader>
-<FluentBodyContent>
-    <FluentStack Orientation="Orientation.Horizontal">
-        <FluentCard Width="400px" Height="250px">
-            <a href="/appointment-registration">New appointment</a>
-        </FluentCard>
-    </FluentStack>
-</FluentBodyContent>
+<AuthorizeView Context="authContext">
+    <FluentHeader>
+        <h1>Welcome to xaberue's Hospital Manager</h1>
+    </FluentHeader>
+    <FluentBodyContent>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentCard Width="400px" Height="250px">
+                <a href="/appointment-registration">New appointment</a>
+            </FluentCard>
+        </FluentStack>
+    </FluentBodyContent>
 
-<FluentFooter>
-    Contact us on our webpage <a href="https://www.dotnetbarcelona.com/">here!</a>
-    <FluentSpacer />
-    xaberue
-</FluentFooter>
+    <FluentFooter>
+        Contact us on our webpage <a href="https://www.dotnetbarcelona.com/">here!</a>
+        <FluentSpacer />
+        xaberue
+    </FluentFooter>
+</AuthorizeView>
+
 
 @* TODO: Add image to the card *@
 @* TODO: Fix current footer(s) *@
