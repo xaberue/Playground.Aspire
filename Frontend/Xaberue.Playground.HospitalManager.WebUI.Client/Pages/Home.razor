@@ -8,12 +8,12 @@
 
 <AuthorizeView Context="authContext">
     <FluentHeader>
-        <h1>Welcome to xaberue's Hospital Manager</h1>
+        <h1>Hospital Manager Quick actions</h1>
     </FluentHeader>
     <FluentBodyContent>
         <FluentStack Orientation="Orientation.Horizontal">
-            <FluentCard Width="400px" Height="250px">
-                <a href="/appointment-registration">New appointment</a>
+            <FluentCard Width="400px" Height="250px" Style="background-image: url('/bg_new_appointment.jpg'); background-size: cover;">
+                <a href="/appointment-registration" class="home-card-text">New appointment</a>
             </FluentCard>
         </FluentStack>
     </FluentBodyContent>
@@ -25,6 +25,4 @@
     </FluentFooter>
 </AuthorizeView>
 
-
-@* TODO: Add image to the card *@
 @* TODO: Fix current footer(s) *@
