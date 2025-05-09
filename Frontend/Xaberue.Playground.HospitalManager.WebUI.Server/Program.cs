@@ -206,12 +206,16 @@ group.MapGet("/patients/selection", async (IPatientQueryApiService patientServic
 })
 .WithName("GetAllPatientSelectionModels");
 
-group.MapGet("/appointments/today", async (IAppointmentQueryApiService appointmentService) =>
+group.MapGet("/appointments/today", async (IAppointmentQueryApiService appointmentService, ILoggerFactory loggerFactory) =>
 {
+    var logger = loggerFactory.CreateLogger("GetAllTodayAppointments");
+    logger.LogInformation("GetAllTodayAppointments called");
+
     var data = await appointmentService.GetAllToday();
+
     return data;
 })
-    .WithName("GetAllTodayAppointments");
+.WithName("GetAllTodayAppointments");
 
 group.MapPost("/appointment", async (IAppointmentCommandApiService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
 {
