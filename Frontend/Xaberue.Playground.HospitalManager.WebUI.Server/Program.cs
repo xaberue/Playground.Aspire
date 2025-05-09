@@ -75,7 +75,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
+builder.AddRabbitMQClient(connectionName: "RabbitMQ");
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 

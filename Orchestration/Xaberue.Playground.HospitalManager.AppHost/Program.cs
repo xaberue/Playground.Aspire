@@ -14,7 +14,7 @@ var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 52099)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
-var rabbitmq = builder.AddRabbitMQ("HospitalManagerServiceBroker")
+var rabbitmq = builder.AddRabbitMQ("RabbitMQ")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume(isReadOnly: false)
     .WithManagementPlugin(port: 15672);

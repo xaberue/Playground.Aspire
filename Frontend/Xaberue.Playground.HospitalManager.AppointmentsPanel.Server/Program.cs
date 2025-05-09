@@ -31,7 +31,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSignalR();
 
-builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
+builder.AddRabbitMQClient(connectionName: "RabbitMQ");
 
 if (grpcEnabled)
 {

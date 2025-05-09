@@ -19,7 +19,7 @@ builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcReflection();
 
 builder.AddMongoDBClient(connectionName: "AppointmentsDb");
-builder.AddRabbitMQClient(connectionName: "HospitalManagerServiceBroker");
+builder.AddRabbitMQClient(connectionName: "RabbitMQ");
 
 builder.Services.AddSingleton<AppointmentDailyCodeGeneratorService>();
 
