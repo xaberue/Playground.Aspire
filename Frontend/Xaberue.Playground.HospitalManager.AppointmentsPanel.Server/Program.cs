@@ -71,7 +71,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(AppointmentsPanelUIPolicyName);
 
-app.MapGet("/api/appointments/current", async (IAppointmentApiService appointmentsApiClient) =>
+app.MapGet("appointments/current", async (IAppointmentApiService appointmentsApiClient) =>
 {
     var appointments = await appointmentsApiClient.GetAllCurrentActiveAsync();
 

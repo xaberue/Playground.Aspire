@@ -9,15 +9,16 @@ import { AppointmentUpdatedModel } from './appointment-updated.model';
   providedIn: 'root',
 })
 export class AppointmentApiService {
-  private readonly apiUrl = 'https://localhost:7159';
+
   private hubConnection: signalR.HubConnection;
 
   private appointmentsSubject = new BehaviorSubject<AppointmentModel[]>([]);
   public appointments$ = this.appointmentsSubject.asObservable();
 
   constructor(private http: HttpClient) {
+    const apiUrl = "https://localhost:7159"; //TODO: By the moment, only HTTP calls are redirected by the proxy. SignalR calls are not redirected. (TBI)
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${this.apiUrl}/hub/appointment-updated`)
+      .withUrl(`${apiUrl}/hub/appointment-updated`)
       .build();
 
     this.hubConnection.on('ReceiveAppointmentUpdated', (appointmentUpdated: AppointmentUpdatedModel) => {
@@ -30,7 +31,7 @@ export class AppointmentApiService {
   }
 
   getAppointments(): void {
-    this.http.get<AppointmentModel[]>(`${this.apiUrl}/api/appointments/current`)
+    this.http.get<AppointmentModel[]>(`api/appointments/current`)
       .subscribe(appointments => this.appointmentsSubject.next(appointments));
   }
 
