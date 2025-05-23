@@ -16,9 +16,9 @@ export class AppointmentApiService {
   public appointments$ = this.appointmentsSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    const apiUrl = "https://localhost:7159"; //TODO: By the moment, only HTTP calls are redirected by the proxy. SignalR calls are not redirected. (TBI)
+    
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${apiUrl}/hub/appointment-updated`)
+      .withUrl(`api/hub/appointment-updated`)
       .build();
 
     this.hubConnection.on('ReceiveAppointmentUpdated', (appointmentUpdated: AppointmentUpdatedModel) => {
