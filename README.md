@@ -32,10 +32,10 @@ _TBD_
 
 # Known Issues / To Be investigated
 
-- SignalR requests are not overriden by the proxy configuration that redirects calls from Angular app to its BFF in .NET. _(TBI)_
 - SignalR is not implemented during the refresh in the Manager UI for appointments. _(TBI)_
 - Identity is not used at the moment, roles are not considered within the manager UI. _(TBI)_
 - Several best practices are required to be added:
   - Minimal API groups routing, specially in BFF projects.
-- Working with multiple instances, check logs, check servers.ç
+  - Mappers extraction.
+- Working with multiple instances, check logs, check servers.
 - DistributedCache / HybridCache is not properly adding traces to OTEL collector. _(TBI)_
