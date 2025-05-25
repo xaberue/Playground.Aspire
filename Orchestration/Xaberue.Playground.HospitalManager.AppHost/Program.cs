@@ -10,7 +10,7 @@ var mssql = builder.AddSqlServer("hospital-manager-sql", port: 65379)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
-var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 52099)
+var mongodb = builder.AddMongoDB("hospital-manager-mongodb", port: 54099)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
