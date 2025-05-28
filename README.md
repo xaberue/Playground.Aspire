@@ -21,6 +21,7 @@ _TBD_
   - SSR
   - Interactive WebAssembly
   - Dealing with both server and client side
+  - How to deal with SignalR connections in Blazor SSR 
 - SignalR
 - Identity
 - Minimal APIs
@@ -32,7 +33,7 @@ _TBD_
 
 # Known Issues
 
-- Identity is not used at the moment, roles are not considered within the manager UI. _(TBI)_
+- Identity is not used at the moment, roles are not considered within the manager UI. (only login and register) _(TBI)_
 - Several best practices are required to be added:
   - Minimal API groups routing, specially in BFF projects. _(TBI)_
   - Mappers extraction. _(TBI)_
