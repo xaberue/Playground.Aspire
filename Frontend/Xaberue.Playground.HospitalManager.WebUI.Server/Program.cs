@@ -8,6 +8,7 @@ using Xaberue.Playground.HospitalManager.WebUI.Server.Components;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Components.Account;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Configuration;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Data;
+using Xaberue.Playground.HospitalManager.WebUI.Server.Hubs;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Appointments;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Doctors;
 using Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Patients;
@@ -138,6 +139,8 @@ else
 
 builder.Services.AddScoped<IAppointmentCommandApiService, AppointmentRabbitClient>();
 
+builder.Services.AddHostedService<AppointmentUpdatedProcessor>();
+
 builder.Services.AddHostedService<DbMigrationsService>();
 
 var app = builder.Build();
@@ -240,6 +243,8 @@ group.MapPut("/appointment/complete", async (IAppointmentCommandApiService appoi
     return Results.Accepted();
 })
 .WithName("CompleteAppointment");
+
+app.MapHub<AppointmentHub>("hub/appointment-updated");
 
 //TODO: Extract mappings
 

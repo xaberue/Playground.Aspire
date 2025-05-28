@@ -32,7 +32,6 @@ _TBD_
 
 # Known Issues
 
-- SignalR is not implemented during the refresh in the Manager UI for appointments. _(TBI)_ _(TBF)_
 - Identity is not used at the moment, roles are not considered within the manager UI. _(TBI)_
 - Several best practices are required to be added:
   - Minimal API groups routing, specially in BFF projects. _(TBI)_

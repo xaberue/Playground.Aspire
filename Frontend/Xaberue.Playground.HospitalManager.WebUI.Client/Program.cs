@@ -30,4 +30,6 @@ builder.Services.AddHttpClient<IPatientQueryApiService, PatientApiService>(clien
     client.BaseAddress = new(builder.HostEnvironment.BaseAddress);
 });
 
+builder.Services.AddScoped<AppointmentSignalrService>(x => new AppointmentSignalrService(builder.HostEnvironment.BaseAddress));
+
 await builder.Build().RunAsync();

@@ -2,7 +2,11 @@
 @attribute [Authorize]
 @rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
+@implements IAsyncDisposable
+
+@using ChustaSoft.Common.Helpers
 @using Microsoft.AspNetCore.Authorization
+@using Xaberue.Playground.HospitalManager.Appointments.Shared
 @using Xaberue.Playground.HospitalManager.WebUI.Client.Services
 @using Xaberue.Playground.HospitalManager.WebUI.Shared
 @using Xaberue.Playground.HospitalManager.WebUI.Shared.Contracts
@@ -10,6 +14,7 @@
 
 @inject IAppointmentQueryApiService AppointmentsApiQueryService
 @inject IAppointmentCommandApiService AppointmentsApiCommandService
+@inject AppointmentSignalrService AppointmentSignalrService
 @inject NavigationManager Navigation
 
 
@@ -48,29 +53,45 @@
 @code {
 
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
-    private IEnumerable<AppointmentGridViewModel>? appointments;
+    private List<AppointmentGridViewModel>? appointments;
     private bool isLoading = true;
 
 
     protected override async Task OnInitializedAsync()
     {
+        await AppointmentSignalrService.Configure(OnAppointmentUpdated);
         await LoadGridData();
     }
 
     private async Task AdmitAsync(AppointmentGridViewModel appointment)
     {
-        isLoading = true;
         var admissionViewModel = new AppointmentAdmissionViewModel(appointment.Id, appointment.DoctorId);
         await AppointmentsApiCommandService.AdmitAsync(admissionViewModel);
-        await Task.Delay(200); //TODO: Update this grid via SignalR as well, remove this sleep
-        await LoadGridData();
     }
 
     private async Task LoadGridData()
     {
         isLoading = true;
-        appointments = await AppointmentsApiQueryService.GetAllToday();
+        var data  = await AppointmentsApiQueryService.GetAllToday();
+        appointments = data.ToList();
         isLoading = false;
+    }
+
+    private void OnAppointmentUpdated(AppointmentUpdatedViewModel appointmentUpdatedViewModel)
+    {
+        var element = appointments?.FirstOrDefault(a => a.Id == appointmentUpdatedViewModel.Id);
+
+        if(element is not null)
+        {
+            element.Update(appointmentUpdatedViewModel.Box, EnumsHelper.GetByString<AppointmentStatus>(appointmentUpdatedViewModel.Status));
+            
+            StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await AppointmentSignalrService.DisposeAsync();
     }
 
 }
