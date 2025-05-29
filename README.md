@@ -25,6 +25,7 @@ _TBD_
 - SignalR
 - Identity
 - Minimal APIs
+  - How to work with RouteGroupBuilder
 - gRPC
 - EntityFrameworkCore
 - Central package management

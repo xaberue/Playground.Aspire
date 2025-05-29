@@ -161,96 +161,17 @@ app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
-var group = app.MapGroup("/api");
+app.MapDefaultEndpoints();
+app.MapAdditionalIdentityEndpoints();
 
-group.MapGet("/doctors/grid", async (HybridCache cache, IDoctorQueryApiService doctorService, CancellationToken cancellationToken) =>
-{
-    var data = await cache.GetOrCreateAsync("DOCTORS-GRID", async entry =>
-    {
-        return await doctorService.GetAllGridModelsAsync(entry);
-    },
-    tags: ["DOCTORS-GRID"],
-    cancellationToken: cancellationToken
-    );
+var group = app.MapGroup("/api")
+    .MapAppointmentsEndpoints()
+    .MapDoctorsEndpoints()
+    .MapPatientsEndpoints();
 
-    return data;
-})
-.WithName("GetAllDoctorGridModels");
-
-group.MapGet("/doctors/selection", async (IDoctorQueryApiService doctorService) =>
-{
-    var data = await doctorService.GetAllSelectionModelsAsync();
-
-    return data;
-})
-.WithName("GetAllDoctorSelectionModels");
-
-group.MapGet("/patients/grid", async (IPatientQueryApiService patientService) =>
-{
-    var data = await patientService.GetAllGridModelsAsync();
-
-    return data;
-})
-.WithName("GetAllPatientGridModels");
-
-group.MapGet("/patients/{code}", async (string code, IPatientQueryApiService patientService) =>
-{
-    var data = await patientService.GetSelectionModelAsync(code);
-
-    return data;
-})
-.WithName("GetPatientSelectionModelByCode");
-
-group.MapGet("/patients/selection", async (IPatientQueryApiService patientService) =>
-{
-    var data = await patientService.GetAllSelectionModelsAsync();
-
-    return data;
-})
-.WithName("GetAllPatientSelectionModels");
-
-group.MapGet("/appointments/today", async (IAppointmentQueryApiService appointmentService, ILoggerFactory loggerFactory) =>
-{
-    var logger = loggerFactory.CreateLogger("GetAllTodayAppointments");
-    logger.LogInformation("GetAllTodayAppointments called");
-
-    var data = await appointmentService.GetAllToday();
-
-    return data;
-})
-.WithName("GetAllTodayAppointments");
-
-group.MapPost("/appointment", async (IAppointmentCommandApiService appointmentService, AppointmentRegistrationViewModel creationModel, CancellationToken cancellationToken) =>
-{
-    await appointmentService.RegisterAsync(creationModel, cancellationToken);
-
-    return Results.Accepted();
-})
-.WithName("RegisterAppointment");
-
-group.MapPut("/appointment/admit", async (IAppointmentCommandApiService appointmentService, AppointmentAdmissionViewModel admissionModel, CancellationToken cancellationToken) =>
-{
-    await appointmentService.AdmitAsync(admissionModel, cancellationToken);
-
-    return Results.Accepted();
-})
-.WithName("AdmitAppointment");
-
-group.MapPut("/appointment/complete", async (IAppointmentCommandApiService appointmentService, AppointmentCompletionViewModel completionModel, CancellationToken cancellationToken) =>
-{
-    await appointmentService.CompleteAsync(completionModel, cancellationToken);
-
-    return Results.Accepted();
-})
-.WithName("CompleteAppointment");
-
-app.MapHub<AppointmentHub>("hub/appointment-updated");
+app.MapAppointmentsHubs();
 
 //TODO: Extract mappings
-
-//TODO: Move Endpoints to a RouteGroupeBuilder extension method
-
-app.MapDefaultEndpoints();
 
 app.UseOutputCache();
 
@@ -259,7 +180,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Xaberue.Playground.HospitalManager.WebUI.Client._Imports).Assembly);
-
-app.MapAdditionalIdentityEndpoints();
 
 app.Run();
