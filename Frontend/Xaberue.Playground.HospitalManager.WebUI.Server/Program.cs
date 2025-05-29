@@ -171,8 +171,6 @@ var group = app.MapGroup("/api")
 
 app.MapAppointmentsHubs();
 
-//TODO: Extract mappings
-
 app.UseOutputCache();
 
 app.MapStaticAssets();

@@ -22,12 +22,7 @@ public class PatientRestApiClient : IPatientQueryApiService
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
         var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients", cancellationToken: cancellationToken) ?? [];
 
-        return patients.Select(x => new PatientGridViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}",
-                x.DateOfBirth
-           ));
+        return patients.Select(x => x.ToGridModel());
     }
 
     public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
@@ -36,11 +31,9 @@ public class PatientRestApiClient : IPatientQueryApiService
         var response = await patientsClient.GetFromJsonAsync<PatientDto>($"/patient/{code}", cancellationToken: cancellationToken);
 
         return response != null ?
-            new PatientSelectionViewModel(
-                response.Id,
-                response.Code,
-                $"{response.Name} {response.Surname}")
-            : null;
+            response.ToSelectionModel()
+            : 
+            null;
     }
 
     public async Task<IEnumerable<PatientSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
@@ -48,12 +41,7 @@ public class PatientRestApiClient : IPatientQueryApiService
         var patientsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.PatientsApiClient);
         var patients = await patientsClient.GetFromJsonAsync<PatientDto[]>("/patients", cancellationToken: cancellationToken) ?? [];
 
-        return patients.Select(x => new PatientSelectionViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}"
-           ));
+        return patients.Select(x => x.ToSelectionModel());
     }
-}
 
-//TODO: Extract mappers
+}

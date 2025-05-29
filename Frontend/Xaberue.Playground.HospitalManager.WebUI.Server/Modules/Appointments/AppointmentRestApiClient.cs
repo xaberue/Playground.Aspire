@@ -35,19 +35,8 @@ public class AppointmentRestApiClient : IAppointmentQueryApiService
             var doctor = doctors.First(d => d.Id == x.DoctorId);
             var patient = patients.First(p => p.Id == x.PatientId);
 
-            return new AppointmentGridViewModel(
-                x.Id,
-                x.Code,
-                x.DoctorId,
-                $"{doctor.Name} {doctor.Surname}",
-                x.PatientId,
-                $"{patient.Name} {patient.Surname}",
-                DateTime.Parse(x.Date),
-                x.Box,
-                x.Reason,
-                x.CriticalityLevel,
-                x.Status
-            );
+            return x.ToGridModel(doctor, patient);
         });
     }
+
 }

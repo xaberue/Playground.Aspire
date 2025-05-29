@@ -35,23 +35,14 @@ public class DoctorGrpcApiService : IDoctorApiClient
     {
         var response = await _doctorGrpcApiClient.GetAllAsync(cancellationToken);
 
-        return response.Doctors.Select(x => new DoctorGridViewModel(
-                x.Id,
-                $"{x.Name} {x.Surname}",
-                DateTime.Parse(x.HiringDate)
-            ));
+        return response.Doctors.Select(x => x.ToGridModel());
     }
 
     public async Task<IEnumerable<DoctorSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
     {
         var response = await _doctorGrpcApiClient.GetAllAsync(cancellationToken);
 
-        return response.Doctors.Select(x => new DoctorSelectionViewModel(
-                x.Id,
-                $"{x.Name} {x.Surname}"
-            ));
+        return response.Doctors.Select(x => x.ToSelectionModel());
     }
 
 }
-
-//TODO: Extract mappers

@@ -30,11 +30,7 @@ public class DoctorRestApiClient : IDoctorApiClient
         var doctorsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
         var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors", cancellationToken: cancellationToken) ?? [];
 
-        return doctors.Select(x => new DoctorGridViewModel(
-               x.Id,
-               $"{x.Name} {x.Surname}",
-               x.HiringDate
-           ));
+        return doctors.Select(x => x.ToGridModel());
     }
 
     public async Task<IEnumerable<DoctorSelectionViewModel>> GetAllSelectionModelsAsync(CancellationToken cancellationToken = default)
@@ -42,13 +38,7 @@ public class DoctorRestApiClient : IDoctorApiClient
         var doctorsClient = _httpClientFactory.CreateClient(HospitalManagerApiConstants.DoctorsApiClient);
         var doctors = await doctorsClient.GetFromJsonAsync<DoctorDto[]>("/doctors", cancellationToken: cancellationToken) ?? [];
 
-        return doctors.Select(x => new DoctorSelectionViewModel(
-               x.Id,
-               $"{x.Name} {x.Surname}"
-           ));
+        return doctors.Select(x => x.ToSelectionModel());
     }
 
-
 }
-
-//TODO: Extract mappers

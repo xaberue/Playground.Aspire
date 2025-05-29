@@ -25,12 +25,7 @@ public class PatientGrpcApiService : IPatientQueryApiService
     {
         var response = await _patientGrpcApiClient.GetAllAsync(cancellationToken);
 
-        return response.Patients.Select(x => new PatientGridViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}",
-                DateTime.Parse(x.DateOfBirth)
-            ));
+        return response.Patients.Select(x => x.ToGridModel());
     }
 
     public async Task<PatientSelectionViewModel?> GetSelectionModelAsync(string code, CancellationToken cancellationToken = default)
@@ -39,11 +34,7 @@ public class PatientGrpcApiService : IPatientQueryApiService
         {
             var response = await _patientGrpcApiClient.GetAsync(code, cancellationToken);
 
-            return new PatientSelectionViewModel(
-                    response.Patient.Id,
-                    response.Patient.Code,
-                    $"{response.Patient.Name} {response.Patient.Surname}"
-                );
+            return response.Patient.ToSelectionModel();
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
         {
@@ -55,13 +46,7 @@ public class PatientGrpcApiService : IPatientQueryApiService
     {
         var response = await _patientGrpcApiClient.GetAllAsync(cancellationToken);
 
-        return response.Patients.Select(x => new PatientSelectionViewModel(
-                x.Id,
-                x.Code,
-                $"{x.Name} {x.Surname}"
-            ));
+        return response.Patients.Select(x => x.ToSelectionModel());
     }
 
 }
-
-//TODO: Extract mappers
