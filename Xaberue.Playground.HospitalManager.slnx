@@ -14,24 +14,27 @@
     <Project Path="Frontend/Xaberue.Playground.HospitalManager.WebUI.Shared/Xaberue.Playground.HospitalManager.WebUI.Shared.csproj" />
   </Folder>
   <Folder Name="/3. Backend/" />
-  <Folder Name="/3. Backend/Appointments/" Id="283a5817-f580-f67a-e620-78a05fa52eb8">
+  <Folder Name="/3. Backend/Appointments/">
     <File Path="Backend/Appointments/appointments.proto" />
     <File Path="Backend/Appointments/AppointmentsApi.http" />
     <Project Path="Backend/Appointments/Xaberue.Playground.HospitalManager.Appointments.Shared/Xaberue.Playground.HospitalManager.Appointments.Shared.csproj" />
     <Project Path="Backend/Appointments/Xaberue.Playground.HospitalManager.Appointments.WebAPI/Xaberue.Playground.HospitalManager.Appointments.WebAPI.csproj" />
   </Folder>
-  <Folder Name="/3. Backend/Doctors/" Id="89393eda-9c64-5563-1681-7d2ff5b06131">
+  <Folder Name="/3. Backend/Doctors/">
     <File Path="Backend/Doctors/doctors.proto" />
     <File Path="Backend/Doctors/DoctorsApi.http" />
     <File Path="Backend/Doctors/SQL_Script_Doctors.sql" />
     <Project Path="Backend/Doctors/Xaberue.Playground.HospitalManager.Doctors.Shared/Xaberue.Playground.HospitalManager.Doctors.Shared.csproj" />
     <Project Path="Backend/Doctors/Xaberue.Playground.HospitalManager.Doctors.WebAPI/Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
   </Folder>
-  <Folder Name="/3. Backend/Patients/" Id="8af45fb6-a0fc-6170-d0b9-12cc79a4811f">
+  <Folder Name="/3. Backend/Patients/">
     <File Path="Backend/Patients/patients.proto" />
     <File Path="Backend/Patients/PatientsApi.http" />
     <File Path="Backend/Patients/SQL_Script_Patients.sql" />
     <Project Path="Backend/Patients/Xaberue.Playground.HospitalManager.Patients.Shared/Xaberue.Playground.HospitalManager.Patients.Shared.csproj" />
     <Project Path="Backend/Patients/Xaberue.Playground.HospitalManager.Patients.WebAPI/Xaberue.Playground.HospitalManager.Patients.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/4. Tests/">
+    <Project Path="Tests/Xaberue.Playground.HospitalManager.Tests/Xaberue.Playground.HospitalManager.Tests.csproj" Id="d7ff84b4-bffd-4066-99c4-cde9f3fe1c28" />
   </Folder>
 </Solution>
