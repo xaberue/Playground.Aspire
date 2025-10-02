@@ -32,7 +32,7 @@ public class PatientRestApiClient : IPatientQueryApiService
 
         return response != null ?
             response.ToSelectionModel()
-            : 
+            :
             null;
     }
 

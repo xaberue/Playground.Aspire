@@ -7,7 +7,7 @@ namespace Xaberue.Playground.HospitalManager.WebUI.Server.Modules.Patients;
 public class PatientGrpcApiClient : GrpcApiClientBase
 {
 
-    public PatientGrpcApiClient(string patientsApiUrl, string patientsApiKey) 
+    public PatientGrpcApiClient(string patientsApiUrl, string patientsApiKey)
         : base(patientsApiUrl, patientsApiKey)
     { }
 

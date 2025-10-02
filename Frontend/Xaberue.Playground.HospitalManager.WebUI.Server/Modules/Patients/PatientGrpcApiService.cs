@@ -15,7 +15,7 @@ public class PatientGrpcApiService : IPatientQueryApiService
     private readonly PatientGrpcApiClient _patientGrpcApiClient;
 
 
-    public PatientGrpcApiService(PatientGrpcApiClient patientGrpcApiClient) 
+    public PatientGrpcApiService(PatientGrpcApiClient patientGrpcApiClient)
     {
         _patientGrpcApiClient = patientGrpcApiClient;
     }

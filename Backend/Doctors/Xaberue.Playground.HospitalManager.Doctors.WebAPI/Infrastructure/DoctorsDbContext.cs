@@ -14,7 +14,7 @@ public class DoctorsDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Doctor>(x => 
+        modelBuilder.Entity<Doctor>(x =>
         {
             x.Property(x => x.Name).HasMaxLength(100).IsRequired();
             x.Property(x => x.Surname).HasMaxLength(100).IsRequired();

@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.ConfigureApiKeyAuthentication((token)
-    => { return token == builder.Configuration["Auth:ApiKeyToken"]!; });
+    =>
+{ return token == builder.Configuration["Auth:ApiKeyToken"]!; });
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();

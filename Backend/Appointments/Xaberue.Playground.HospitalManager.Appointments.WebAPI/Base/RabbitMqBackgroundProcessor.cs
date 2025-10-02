@@ -60,9 +60,9 @@ public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundServic
     protected void PublishAppointmentUpdatedEvent(Appointment appointment)
     {
         var appointmentUpdatedEvent = new AppointmentUpdatedEvent(
-            appointment.Id.ToString(), 
-            appointment.Code, 
-            string.IsNullOrWhiteSpace(appointment.Box) ? "-" : appointment.Box, 
+            appointment.Id.ToString(),
+            appointment.Code,
+            string.IsNullOrWhiteSpace(appointment.Box) ? "-" : appointment.Box,
             appointment.Status);
 
         var messageModelSerialized = JsonSerializer.Serialize(appointmentUpdatedEvent);
