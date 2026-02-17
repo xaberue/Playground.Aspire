@@ -9,11 +9,12 @@ using Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Models;
 
 namespace Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.Services;
 
-public class AppointmentUpdatedProcessor : BackgroundService
+public class AppointmentUpdatedProcessor : BackgroundService, IAsyncDisposable
 {
 
+    private IChannel? _rabbitMqChannel;
+
     private readonly IConnection _rabbitMqConnection;
-    private readonly IModel _rabbitMqChannel;
     private readonly ILogger<AppointmentUpdatedProcessor> _logger;
     private readonly IHubContext<AppointmentHub> _hubContext;
 
@@ -21,7 +22,6 @@ public class AppointmentUpdatedProcessor : BackgroundService
     public AppointmentUpdatedProcessor(IConnection rabbitMqConnection, IHubContext<AppointmentHub> hubContext, ILogger<AppointmentUpdatedProcessor> logger)
     {
         _rabbitMqConnection = rabbitMqConnection;
-        _rabbitMqChannel = _rabbitMqConnection.CreateModel();
         _hubContext = hubContext;
         _logger = logger;
     }
@@ -31,30 +31,11 @@ public class AppointmentUpdatedProcessor : BackgroundService
     {
         _logger.LogInformation("RabbitMQ UI {processor} started...", nameof(AppointmentUpdatedProcessor));
 
-        var consumer = new EventingBasicConsumer(_rabbitMqChannel);
-        consumer.Received += OnMessageReceived(stoppingToken);
+        _rabbitMqChannel = await _rabbitMqConnection.CreateChannelAsync();
 
-        _rabbitMqChannel.BasicConsume(queue: InfrastructureHelper.GetQueueName(InfrastructureHelper.Constants.AppointmentUpdated), autoAck: false, consumer: consumer);
-
-        while (!stoppingToken.IsCancellationRequested)
+        var consumer = new AsyncEventingBasicConsumer(_rabbitMqChannel);
+        consumer.ReceivedAsync += async (model, ea) =>
         {
-            await Task.Delay(1000, stoppingToken);
-        }
-
-        _logger.LogInformation("RabbitMQ UI {processor} stopped...", nameof(AppointmentUpdatedProcessor));
-    }
-
-
-    private EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken)
-    {
-        return async (model, ea) =>
-        {
-            if (stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogError("Cancellation requested. Stopping event message processing.");
-                return;
-            }
-
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
 
@@ -68,15 +49,25 @@ public class AppointmentUpdatedProcessor : BackgroundService
 
                 await ProcessAppointmentRegistration(appointmentUpdatedEvent);
 
-                _rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                await _rabbitMqChannel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing event message: {message}", message);
-                _rabbitMqChannel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
+                await _rabbitMqChannel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
             }
         };
+
+        await _rabbitMqChannel.BasicConsumeAsync(queue: InfrastructureHelper.GetQueueName(InfrastructureHelper.Constants.AppointmentUpdated), autoAck: false, consumer: consumer);
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await Task.Delay(1000, stoppingToken);
+        }
+
+        _logger.LogInformation("RabbitMQ UI {processor} stopped...", nameof(AppointmentUpdatedProcessor));
     }
+
 
     private async Task ProcessAppointmentRegistration(AppointmentUpdatedEvent appointmentUpdatedEvent)
     {
@@ -100,11 +91,16 @@ public class AppointmentUpdatedProcessor : BackgroundService
     }
 
 
-    public override void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        _rabbitMqChannel?.Close();
-        _rabbitMqConnection?.Close();
-        base.Dispose();
+        if (_rabbitMqChannel is not null)
+        {
+            await _rabbitMqChannel.CloseAsync();
+        }
+
+        _rabbitMqConnection?.Dispose();
+
+        await ValueTask.CompletedTask;
     }
 
 }

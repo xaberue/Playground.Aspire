@@ -18,39 +18,30 @@ public class AppointmentAdmittedProcessor : RabbitMqBackgroundProcessor<Appointm
     { }
 
 
-    protected override EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken)
+    protected override async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs @event)
     {
-        return async (model, ea) =>
+        var body = @event.Body.ToArray();
+        var message = Encoding.UTF8.GetString(body);
+
+        try
         {
-            if (stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogError("Cancellation requested. Stopping admission message processing.");
-                return;
-            }
+            _logger.LogInformation("Received admission message: {message}", message);
+            var admissionDto = JsonSerializer.Deserialize<AppointmentAdmissionDto>(message);
 
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            if (admissionDto is null)
+                throw new InvalidOperationException("Invalid admission message content: Unable to deserialize.");
 
-            try
-            {
-                _logger.LogInformation("Received admission message: {message}", message);
-                var admissionDto = JsonSerializer.Deserialize<AppointmentAdmissionDto>(message);
+            var appointment = await ProcessAppointmentRegistration(admissionDto);
 
-                if (admissionDto is null)
-                    throw new InvalidOperationException("Invalid admission message content: Unable to deserialize.");
+            await PublishAppointmentUpdatedEventAsync(appointment);
 
-                var appointment = await ProcessAppointmentRegistration(admissionDto);
-
-                PublishAppointmentUpdatedEvent(appointment);
-
-                _rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing admission message: {message}", message);
-                _rabbitMqChannel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
-            }
-        };
+            await _rabbitMqChannel!.BasicAckAsync(deliveryTag: @event.DeliveryTag, multiple: false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing admission message: {message}", message);
+            await _rabbitMqChannel!.BasicNackAsync(deliveryTag: @event.DeliveryTag, multiple: false, requeue: false);
+        }
     }
 
 

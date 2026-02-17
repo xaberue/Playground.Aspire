@@ -10,13 +10,13 @@ public static class RabbitMqHelper
         using var scope = app.Services.CreateAsyncScope();
 
         var connection = scope.ServiceProvider.GetRequiredService<IConnection>();
-        var channel = connection.CreateModel();
+        var channel = await connection.CreateChannelAsync();
 
-        channel.DeclareExchange(InfrastructureHelper.Constants.AppointmentRegistered);
-        channel.DeclareExchange(InfrastructureHelper.Constants.AppointmentAdmitted);
-        channel.DeclareExchange(InfrastructureHelper.Constants.AppointmentCompleted);
+        await channel.DeclareExchangeAsync(InfrastructureHelper.Constants.AppointmentRegistered);
+        await channel.DeclareExchangeAsync(InfrastructureHelper.Constants.AppointmentAdmitted);
+        await channel.DeclareExchangeAsync(InfrastructureHelper.Constants.AppointmentCompleted);
 
-        channel.DeclareQueue(InfrastructureHelper.Constants.AppointmentUpdated);
+        await channel.DeclareQueueAsync(InfrastructureHelper.Constants.AppointmentUpdated);
 
         await Task.CompletedTask;
     }

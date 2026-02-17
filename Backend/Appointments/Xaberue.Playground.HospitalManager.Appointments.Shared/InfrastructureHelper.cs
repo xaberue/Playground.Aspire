@@ -50,45 +50,46 @@ public static class InfrastructureHelper
         return builder.ToString();
     }
 
-    public static string DeclareQueue(this IModel channel, string baseName)
+    public static async Task<string> DeclareQueueAsync(this IChannel channel, string baseName)
     {
         var queueName = GetQueueName(baseName);
         var deadLetterQueueName = GetDeadLetterQueueName(baseName);
-        channel.QueueDeclare(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        
+        await channel.QueueDeclareAsync(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-        var mainQueueArguments = new Dictionary<string, object>
+        var mainQueueArguments = new Dictionary<string, object?>
          {
              { "x-dead-letter-exchange", "" },
              { "x-dead-letter-routing-key", deadLetterQueueName }
          };
 
-        channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
+        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
 
         return queueName;
     }
 
-    public static string DeclareExchange(this IModel channel, string baseName)
+    public static async Task<string> DeclareExchangeAsync(this IChannel channel, string baseName)
     {
         var exchangeName = GetExchangeName(baseName);
 
-        channel.ExchangeDeclare(exchange: exchangeName, type: "fanout");
+        await channel.ExchangeDeclareAsync(exchange: exchangeName, ExchangeType.Fanout);
 
         return exchangeName;
     }
 
-    public static string DeclareSubscriptionQueue(this IModel channel, string baseName, string? customSuffix = null)
+    public static async Task<string> DeclareSubscriptionQueue(this IChannel channel, string baseName, string? customSuffix = null)
     {
         var exchangeName = GetExchangeName(baseName);
         var queueName = GetQueueName(baseName, customSuffix);
         var deadLetterQueueName = GetDeadLetterQueueName(baseName, customSuffix);
-        channel.QueueDeclare(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-        var mainQueueArguments = new Dictionary<string, object>
+        await channel.QueueDeclareAsync(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        var mainQueueArguments = new Dictionary<string, object?>
         {
             { "x-dead-letter-exchange", "" },
             { "x-dead-letter-routing-key", deadLetterQueueName }
         };
-        channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
-        channel.QueueBind(queue: queueName, exchange: exchangeName, routingKey: "");
+        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: mainQueueArguments);
+        await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: "");
 
         return queueName;
     }

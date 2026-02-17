@@ -37,4 +37,8 @@
   <Folder Name="/4. Tests/">
     <Project Path="Tests/Xaberue.Playground.HospitalManager.Tests/Xaberue.Playground.HospitalManager.Tests.csproj" Id="d7ff84b4-bffd-4066-99c4-cde9f3fe1c28" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Solution Items/TestData/" />
 </Solution>
