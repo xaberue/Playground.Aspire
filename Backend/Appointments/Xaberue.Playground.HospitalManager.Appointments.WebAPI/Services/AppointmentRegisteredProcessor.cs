@@ -24,39 +24,30 @@ public class AppointmentRegisteredProcessor : RabbitMqBackgroundProcessor<Appoin
     }
 
 
-    protected override EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken)
+    protected override async Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs @event)
     {
-        return async (model, ea) =>
+        var body = @event.Body.ToArray();
+        var message = Encoding.UTF8.GetString(body);
+
+        try
         {
-            if (stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogError("Cancellation requested. Stopping registration message processing.");
-                return;
-            }
+            _logger.LogInformation("Received registration message: {message}", message);
+            var registrationDto = JsonSerializer.Deserialize<AppointmentRegistrationDto>(message);
 
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            if (registrationDto is null)
+                throw new InvalidOperationException("Invalid registration message content: Unable to deserialize.");
 
-            try
-            {
-                _logger.LogInformation("Received registration message: {message}", message);
-                var registrationDto = JsonSerializer.Deserialize<AppointmentRegistrationDto>(message);
+            var appointment = await ProcessAppointmentRegistration(registrationDto);
 
-                if (registrationDto is null)
-                    throw new InvalidOperationException("Invalid registration message content: Unable to deserialize.");
+            await PublishAppointmentUpdatedEventAsync(appointment);
 
-                var appointment = await ProcessAppointmentRegistration(registrationDto);
-
-                PublishAppointmentUpdatedEvent(appointment);
-
-                _rabbitMqChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing registration message: {message}", message);
-                _rabbitMqChannel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
-            }
-        };
+            await _rabbitMqChannel!.BasicAckAsync(deliveryTag: @event.DeliveryTag, multiple: false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing registration message: {message}", message);
+            await _rabbitMqChannel!.BasicNackAsync(deliveryTag: @event.DeliveryTag, multiple: false, requeue: false);
+        }
     }
 
 

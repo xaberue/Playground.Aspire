@@ -10,31 +10,25 @@ using System.Threading.Channels;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Base;
 
-public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundService
+public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundService, IAsyncDisposable
 {
 
-    protected readonly string _queueName;
+    protected string? _queueName;
+    protected IChannel? _rabbitMqChannel;
+
     protected readonly IConnection _rabbitMqConnection;
-    protected readonly IModel _rabbitMqChannel;
     protected readonly IMongoClient _mongoDbClient;
     protected readonly ILogger<TProcessor> _logger;
+
+    private readonly string _exchangeName;
 
 
     public RabbitMqBackgroundProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<TProcessor> logger, string exchangeName)
     {
         _rabbitMqConnection = rabbitMqConnection;
-        _rabbitMqChannel = _rabbitMqConnection.CreateModel();
-        _queueName = _rabbitMqChannel.DeclareSubscriptionQueue(exchangeName);
         _mongoDbClient = mongoDbClient;
         _logger = logger;
-    }
-
-
-    public override void Dispose()
-    {
-        _rabbitMqChannel?.Close();
-        _rabbitMqConnection?.Close();
-        base.Dispose();
+        _exchangeName = exchangeName;
     }
 
 
@@ -42,10 +36,13 @@ public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundServic
     {
         _logger.LogInformation($"RabbitMQ {nameof(TProcessor)} started...");
 
-        var consumer = new EventingBasicConsumer(_rabbitMqChannel);
-        consumer.Received += OnMessageReceived(stoppingToken);
+        _rabbitMqChannel = await _rabbitMqConnection.CreateChannelAsync();
+        _queueName = await _rabbitMqChannel.DeclareSubscriptionQueue(_exchangeName);
 
-        _rabbitMqChannel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
+        var consumer = new AsyncEventingBasicConsumer(_rabbitMqChannel);
+        consumer.ReceivedAsync += OnMessageReceivedAsync;
+
+        await _rabbitMqChannel.BasicConsumeAsync(queue: _queueName, autoAck: false, consumer: consumer);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -55,9 +52,9 @@ public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundServic
         _logger.LogInformation($"RabbitMQ {nameof(TProcessor)} stopped...");
     }
 
-    protected abstract EventHandler<BasicDeliverEventArgs> OnMessageReceived(CancellationToken stoppingToken);
+    protected abstract Task OnMessageReceivedAsync(object sender, BasicDeliverEventArgs @event);
 
-    protected void PublishAppointmentUpdatedEvent(Appointment appointment)
+    protected async Task PublishAppointmentUpdatedEventAsync(Appointment appointment)
     {
         var appointmentUpdatedEvent = new AppointmentUpdatedEvent(
             appointment.Id.ToString(),
@@ -68,7 +65,17 @@ public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundServic
         var messageModelSerialized = JsonSerializer.Serialize(appointmentUpdatedEvent);
         var body = Encoding.UTF8.GetBytes(messageModelSerialized);
 
-        _rabbitMqChannel.BasicPublish(exchange: "", routingKey: InfrastructureHelper.GetQueueName(InfrastructureHelper.Constants.AppointmentUpdated), basicProperties: null, body: body);
+        await _rabbitMqChannel!.BasicPublishAsync(exchange: "", routingKey: InfrastructureHelper.GetQueueName(InfrastructureHelper.Constants.AppointmentUpdated), body: body);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_rabbitMqChannel is not null)
+        {
+            await _rabbitMqChannel.CloseAsync();
+        }
+
+        _rabbitMqConnection?.Dispose();
     }
 
 }
