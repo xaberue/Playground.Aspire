@@ -1,6 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<Sdk Name="Aspire.AppHost.Sdk" Version="13.1.1" />
+<Project Sdk="Aspire.AppHost.Sdk/13.2.1">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -16,8 +14,6 @@
 		<ProjectReference Include="..\..\Backend\Doctors\Xaberue.Playground.HospitalManager.Doctors.WebAPI\Xaberue.Playground.HospitalManager.Doctors.WebAPI.csproj" />
 		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server\Xaberue.Playground.HospitalManager.AppointmentsPanel.Server.csproj" />
 		<ProjectReference Include="..\..\Frontend\Xaberue.Playground.HospitalManager.WebUI.Server\Xaberue.Playground.HospitalManager.WebUI.Server.csproj" />
-
-		<PackageReference Include="Aspire.Hosting.AppHost" />
 		<PackageReference Include="Aspire.Hosting.MongoDB" />
 		<PackageReference Include="Aspire.Hosting.NodeJs" />
 		<PackageReference Include="Aspire.Hosting.RabbitMQ" />
