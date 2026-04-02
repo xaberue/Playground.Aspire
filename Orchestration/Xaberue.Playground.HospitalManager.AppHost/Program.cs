@@ -61,7 +61,7 @@ var appointmentsPanelServer = builder.AddProject<Projects.Xaberue_Playground_Hos
     .WaitFor(rabbitmq)
     .WaitFor(appointmentsApi);
 
-var appointmentsPanelClient = builder.AddNpmApp("appointmentspanel-client", "../../Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client")
+var appointmentsPanelClient = builder.AddJavaScriptApp("appointmentspanel-client", "../../Frontend/Xaberue.Playground.HospitalManager.AppointmentsPanel.Client", runScriptName: "start")
     .WithReference(appointmentsPanelServer)
     .WaitFor(appointmentsPanelServer)
     .WithHttpEndpoint(env: "PORT")
