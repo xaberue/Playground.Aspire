@@ -38,7 +38,11 @@
     <Project Path="Tests/Xaberue.Playground.HospitalManager.Tests/Xaberue.Playground.HospitalManager.Tests.csproj" Id="d7ff84b4-bffd-4066-99c4-cde9f3fe1c28" />
   </Folder>
   <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
     <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
   </Folder>
   <Folder Name="/Solution Items/TestData/" />
 </Solution>
