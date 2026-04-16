@@ -33,6 +33,7 @@ var doctorsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_
 
 var appointmentsApi = builder.AddProject<Projects.Xaberue_Playground_HospitalManager_Appointments_WebAPI>("appointments-webapi")
     .WithEnvironment("Auth__ApiKeyToken", appointmentsApiKey)
+    .WithEnvironment("noSqlDb", noSqlTypeArgs)
     .WithReference(rabbitmq)
     .WaitFor(rabbitmq);
 

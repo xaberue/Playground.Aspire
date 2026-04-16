@@ -18,7 +18,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcReflection();
 
-builder.AddMongoDBClient(connectionName: "AppointmentsDb");
+var noSqlDbType = builder.Configuration["noSqlDb"];
+
+if (noSqlDbType == "MongoDb")
+    builder.AddMongoDBClient(connectionName: "AppointmentsDb");
+else if (noSqlDbType == "RavenDB")
+    builder.AddRavenDBClient(connectionName: "AppointmentsDb");
+else
+    throw new ArgumentException("Invalid NoSQL database type specified in configuration.");
+
 builder.AddRabbitMQClient(connectionName: "RabbitMQ");
 
 builder.Services.AddSingleton<AppointmentDailyCodeGeneratorService>();
