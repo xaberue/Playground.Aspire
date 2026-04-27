@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using MongoDB.Driver;
-using Xaberue.Playground.HospitalManager.Appointments.Shared;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
@@ -11,23 +10,20 @@ namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 public class AppointmentsGrpcService : Appointments.AppointmentsBase
 {
 
-    private readonly IMongoClient _mongoClient;
+    private readonly IAppointmentsRepository _appointmentsRepository;
     private readonly AppointmentDailyCodeGeneratorService _appointmentCodeGeneratorService;
 
 
-    public AppointmentsGrpcService(IMongoClient mongoClient, AppointmentDailyCodeGeneratorService appointmentCodeGeneratorService)
+    public AppointmentsGrpcService(IAppointmentsRepository appointmentsRepository, AppointmentDailyCodeGeneratorService appointmentCodeGeneratorService)
     {
-        _mongoClient = mongoClient;
+        _appointmentsRepository = appointmentsRepository;
         _appointmentCodeGeneratorService = appointmentCodeGeneratorService;
     }
 
 
     public override async Task<AppointmentDetailsCollection> GetAllToday(GetAllTodayAppointmentsRequest request, ServerCallContext context)
     {
-        var db = _mongoClient.GetDatabase("AppointmentsDb");
-        var collection = db.GetCollection<Appointment>("Appointments");
-        var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today);
-        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToDetailGrpcModel());
+        var appointments = (await _appointmentsRepository.GetAllForToday()).Select(x => x.ToDetailGrpcModel());
         var response = new AppointmentDetailsCollection();
         response.Appointments.AddRange(appointments);
 
@@ -36,11 +32,7 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
 
     public override async Task<AppointmentSummariesCollection> GetAllCurrentActive(GetAllCurrentActiveAppointmentsRequest request, ServerCallContext context)
     {
-        var db = _mongoClient.GetDatabase("AppointmentsDb");
-        var collection = db.GetCollection<Appointment>("Appointments");
-        var filter = Builders<Appointment>.Filter.Gt(a => a.Date, DateTime.Today) &
-            Builders<Appointment>.Filter.Ne(a => a.Status, AppointmentStatus.Completed);
-        var appointments = (await collection.Find(filter).ToListAsync()).Select(x => x.ToSummaryGrpcModel());
+        var appointments = (await _appointmentsRepository.GetAllCurrentActive()).Select(x => x.ToSummaryGrpcModel());
         var response = new AppointmentSummariesCollection();
         response.Appointments.AddRange(appointments);
 
@@ -54,10 +46,9 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
 
         var generatedCode = await _appointmentCodeGeneratorService.GenerateAsync();
         var appointment = new Appointment(request.PatientId, request.DoctorId, generatedCode, request.Reason);
-        var db = _mongoClient.GetDatabase("AppointmentsDb");
-        var collection = db.GetCollection<Appointment>("Appointments");
+        
+        await _appointmentsRepository.InsertAsync(appointment);
 
-        await collection.InsertOneAsync(appointment);
         var response = new CreateAppointmentResponse { Appointment = appointment.ToSummaryGrpcModel() };
 
         return response;

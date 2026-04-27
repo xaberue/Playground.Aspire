@@ -1,40 +1,25 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 
 public class AppointmentDailyCodeGeneratorService
 {
 
-    private readonly IMongoCollection<BsonDocument> _dailyCountersCollection;
+    private readonly IAppointmentDailyCountersRepository _appointmentDailyCountersRepository;
 
 
-    public AppointmentDailyCodeGeneratorService(IMongoDatabase database)
+    public AppointmentDailyCodeGeneratorService(IAppointmentDailyCountersRepository appointmentDailyCountersRepository)
     {
-        _dailyCountersCollection = database.GetCollection<BsonDocument>("AppointmentDailyCounters");
+        _appointmentDailyCountersRepository = appointmentDailyCountersRepository;
     }
 
 
     public async Task<string> GenerateAsync()
     {
-        var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
-
-        var update = Builders<BsonDocument>.Update.Inc("counter", 1);
-        var options = new FindOneAndUpdateOptions<BsonDocument>
-        {
-            ReturnDocument = ReturnDocument.After,
-            IsUpsert = true
-        };
-
-        var counterDoc = await _dailyCountersCollection.FindOneAndUpdateAsync(
-            Builders<BsonDocument>.Filter.Eq("_id", today),
-            update,
-            options
-        );
-
-        var counter = counterDoc["counter"].ToInt32();
+        var counter = await _appointmentDailyCountersRepository.GetForAsync(DateTime.UtcNow);
 
         return $"V-{counter}";
     }
+
 
 }

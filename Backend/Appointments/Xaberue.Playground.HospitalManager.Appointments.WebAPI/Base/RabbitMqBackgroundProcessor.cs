@@ -1,12 +1,10 @@
-﻿using MongoDB.Driver;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
-using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
-using System.Threading.Channels;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Base;
 
@@ -17,16 +15,16 @@ public abstract class RabbitMqBackgroundProcessor<TProcessor> : BackgroundServic
     protected IChannel? _rabbitMqChannel;
 
     protected readonly IConnection _rabbitMqConnection;
-    protected readonly IMongoClient _mongoDbClient;
+    protected readonly IAppointmentsRepository _appointmentsRepository;
     protected readonly ILogger<TProcessor> _logger;
 
     private readonly string _exchangeName;
 
 
-    public RabbitMqBackgroundProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<TProcessor> logger, string exchangeName)
+    public RabbitMqBackgroundProcessor(IConnection rabbitMqConnection, IAppointmentsRepository appointmentsRepository, ILogger<TProcessor> logger, string exchangeName)
     {
         _rabbitMqConnection = rabbitMqConnection;
-        _mongoDbClient = mongoDbClient;
+        _appointmentsRepository = appointmentsRepository;
         _logger = logger;
         _exchangeName = exchangeName;
     }

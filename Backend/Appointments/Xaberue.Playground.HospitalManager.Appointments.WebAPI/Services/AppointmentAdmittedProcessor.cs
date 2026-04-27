@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
@@ -13,8 +11,9 @@ namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 
 public class AppointmentAdmittedProcessor : RabbitMqBackgroundProcessor<AppointmentAdmittedProcessor>
 {
-    public AppointmentAdmittedProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<AppointmentAdmittedProcessor> logger)
-        : base(rabbitMqConnection, mongoDbClient, logger, InfrastructureHelper.Constants.AppointmentAdmitted)
+
+    public AppointmentAdmittedProcessor(IConnection rabbitMqConnection, IAppointmentsRepository appointmentsRepository, ILogger<AppointmentAdmittedProcessor> logger)
+        : base(rabbitMqConnection, appointmentsRepository, logger, InfrastructureHelper.Constants.AppointmentAdmitted)
     { }
 
 
@@ -49,19 +48,7 @@ public class AppointmentAdmittedProcessor : RabbitMqBackgroundProcessor<Appointm
     {
         try
         {
-            var db = _mongoDbClient.GetDatabase("AppointmentsDb");
-            var collection = db.GetCollection<Appointment>("Appointments");
-            var appointment = await collection.FindOneAndUpdateAsync<Appointment>(
-                Builders<Appointment>.Filter.Eq(a => a.Id, ObjectId.Parse(registrationDto.Id)),
-                Builders<Appointment>.Update.Combine(
-                    Builders<Appointment>.Update.Set(a => a.Status, AppointmentStatus.Admitted),
-                    Builders<Appointment>.Update.Set(a => a.Box, registrationDto.Box)
-                ),
-                new FindOneAndUpdateOptions<Appointment>
-                {
-                    ReturnDocument = ReturnDocument.After
-                }
-            );
+            var appointment = await _appointmentsRepository.UpdateAsync(registrationDto.Id, registrationDto.Box, AppointmentStatus.Admitted);
 
             _logger.LogTrace("Appointment {id} successfully admitted.", registrationDto.Id);
 

@@ -1,9 +1,7 @@
-﻿using MongoDB.Driver;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Base;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
@@ -17,8 +15,8 @@ public class AppointmentRegisteredProcessor : RabbitMqBackgroundProcessor<Appoin
     private readonly AppointmentDailyCodeGeneratorService _appointmentDailyCodeGeneratorService;
 
 
-    public AppointmentRegisteredProcessor(IConnection rabbitMqConnection, IMongoClient mongoDbClient, ILogger<AppointmentRegisteredProcessor> logger, AppointmentDailyCodeGeneratorService appointmentDailyCodeGeneratorService)
-        : base(rabbitMqConnection, mongoDbClient, logger, InfrastructureHelper.Constants.AppointmentRegistered)
+    public AppointmentRegisteredProcessor(IConnection rabbitMqConnection, IAppointmentsRepository appointmentsRepository, ILogger<AppointmentRegisteredProcessor> logger, AppointmentDailyCodeGeneratorService appointmentDailyCodeGeneratorService)
+        : base(rabbitMqConnection, appointmentsRepository, logger, InfrastructureHelper.Constants.AppointmentRegistered)
     {
         _appointmentDailyCodeGeneratorService = appointmentDailyCodeGeneratorService;
     }
@@ -55,13 +53,11 @@ public class AppointmentRegisteredProcessor : RabbitMqBackgroundProcessor<Appoin
     {
         try
         {
-            var db = _mongoDbClient.GetDatabase("AppointmentsDb");
-            var collection = db.GetCollection<Appointment>("Appointments");
             var generatedCode = await _appointmentDailyCodeGeneratorService.GenerateAsync();
             var appointment = new Appointment(registrationDto.PatientId, registrationDto.DoctorId, generatedCode, registrationDto.Reason);
 
-            await collection.InsertOneAsync(appointment);
-
+            await _appointmentsRepository.InsertAsync(appointment);
+            
             _logger.LogTrace("Appointment {id} successfully registered.", appointment.Id);
 
             return appointment;

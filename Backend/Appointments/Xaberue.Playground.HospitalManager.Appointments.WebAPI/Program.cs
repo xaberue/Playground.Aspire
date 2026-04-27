@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.ConfigureApiKeyAuthentication((token)
-    => { return token == builder.Configuration["Auth:ApiKeyToken"]!; });
+builder.Services.ConfigureApiKeyAuthentication(
+    (token) => { return token == builder.Configuration["Auth:ApiKeyToken"]!; });
 
 builder.Services.AddOpenApi();
 
@@ -21,9 +21,16 @@ builder.Services.AddGrpcReflection();
 var noSqlDbType = builder.Configuration["noSqlDb"];
 
 if (noSqlDbType == "MongoDb")
+{
     builder.AddMongoDBClient(connectionName: "AppointmentsDb");
+
+    builder.Services.AddSingleton<IAppointmentsRepository, AppointmentsMongoRepository>();
+    builder.Services.AddSingleton<IAppointmentDailyCountersRepository, AppointmentDailyCountersMongoRepository>();
+}
 else if (noSqlDbType == "RavenDB")
+{
     builder.AddRavenDBClient(connectionName: "AppointmentsDb");
+}
 else
     throw new ArgumentException("Invalid NoSQL database type specified in configuration.");
 
