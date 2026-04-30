@@ -2,6 +2,7 @@
 
 public enum CriticalityLevel
 {
+    Undeterminated,
     Low,
     Medium,
     High

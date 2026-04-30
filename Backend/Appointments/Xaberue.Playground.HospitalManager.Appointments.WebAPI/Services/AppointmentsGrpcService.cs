@@ -46,7 +46,7 @@ public class AppointmentsGrpcService : Appointments.AppointmentsBase
 
         var generatedCode = await _appointmentCodeGeneratorService.GenerateAsync();
         var appointment = new Appointment(request.PatientId, request.DoctorId, generatedCode, request.Reason);
-        
+
         await _appointmentsRepository.InsertAsync(appointment);
 
         var response = new CreateAppointmentResponse { Appointment = appointment.ToSummaryGrpcModel() };

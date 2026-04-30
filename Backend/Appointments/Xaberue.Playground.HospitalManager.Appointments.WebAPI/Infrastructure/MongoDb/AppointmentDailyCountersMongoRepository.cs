@@ -1,8 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
-namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
+namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure.MongoDb;
 
 public class AppointmentDailyCountersMongoRepository : IAppointmentDailyCountersRepository
 {

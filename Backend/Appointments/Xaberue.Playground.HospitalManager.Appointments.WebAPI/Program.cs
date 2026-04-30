@@ -1,10 +1,9 @@
 using ChustaSoft.Auth.ApiKey;
-using RabbitMQ.Client;
-using Xaberue.Playground.HospitalManager.Appointments.Shared;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure.MongoDb;
+using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Infrastructure.RavenDb;
 using Xaberue.Playground.HospitalManager.Appointments.WebAPI.Services;
 using Xaberue.Playground.HospitalManager.ServiceDefaults;
-using static Xaberue.Playground.HospitalManager.Appointments.Shared.InfrastructureHelper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +26,12 @@ if (noSqlDbType == "MongoDb")
     builder.Services.AddSingleton<IAppointmentsRepository, AppointmentsMongoRepository>();
     builder.Services.AddSingleton<IAppointmentDailyCountersRepository, AppointmentDailyCountersMongoRepository>();
 }
-else if (noSqlDbType == "RavenDB")
+else if (noSqlDbType == "RavenDb")
 {
     builder.AddRavenDBClient(connectionName: "AppointmentsDb");
+
+    builder.Services.AddSingleton<IAppointmentsRepository, AppointmentsRavenRepository>();
+    builder.Services.AddSingleton<IAppointmentDailyCountersRepository, AppointmentDailyCountersRavenRepository>();
 }
 else
     throw new ArgumentException("Invalid NoSQL database type specified in configuration.");
@@ -60,5 +62,9 @@ app.MapGrpcService<AppointmentsGrpcService>();
 
 await app.SetUpRabbitMq();
 
-app.Run();
+if (noSqlDbType == "RavenDb")
+{
+    await app.InitialiseRavenDb();
+}
 
+app.Run();

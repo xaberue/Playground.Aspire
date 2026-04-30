@@ -57,7 +57,7 @@ public class AppointmentRegisteredProcessor : RabbitMqBackgroundProcessor<Appoin
             var appointment = new Appointment(registrationDto.PatientId, registrationDto.DoctorId, generatedCode, registrationDto.Reason);
 
             await _appointmentsRepository.InsertAsync(appointment);
-            
+
             _logger.LogTrace("Appointment {id} successfully registered.", appointment.Id);
 
             return appointment;

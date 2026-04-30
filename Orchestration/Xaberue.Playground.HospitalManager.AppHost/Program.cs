@@ -79,7 +79,7 @@ if (noSqlTypeArgs == "MongoDb")
         .WithReference(appointmentsDb)
         .WaitFor(appointmentsDb);
 }
-else if (noSqlTypeArgs == "RavenDB")
+else if (noSqlTypeArgs == "RavenDb")
 {
     var ravenServer = builder.AddRavenDB("hospital-manager-ravendb")
         .WithLifetime(ContainerLifetime.Persistent)

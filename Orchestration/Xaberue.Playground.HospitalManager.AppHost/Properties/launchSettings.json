@@ -6,7 +6,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:17297;http://localhost:15042",
-      "commandLineArgs": "--noSqlDb=MongoDb",
+      "commandLineArgs": "--noSqlDb=RavenDb",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",

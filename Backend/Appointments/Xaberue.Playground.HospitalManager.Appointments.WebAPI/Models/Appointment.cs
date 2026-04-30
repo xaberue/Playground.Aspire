@@ -1,15 +1,10 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using Xaberue.Playground.HospitalManager.Appointments.Shared;
+﻿using Xaberue.Playground.HospitalManager.Appointments.Shared;
 
 namespace Xaberue.Playground.HospitalManager.Appointments.WebAPI.Models;
 
 public class Appointment
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
-
+    public string Id { get; set; } = null!;
     public string Code { get; init; }
     public int PatientId { get; init; }
     public int DoctorId { get; init; }
@@ -36,9 +31,8 @@ public class Appointment
         : this(patientId, doctorId, code, DateTime.UtcNow, reason, null, AppointmentStatus.Registered)
     { }
 
-
-    public Appointment(ObjectId id, int patientId, string code, int doctorId, DateTime date, string reason, CriticalityLevel criticality, AppointmentStatus status)
-        : this(patientId, doctorId, code, date, reason, criticality, status)
+    public Appointment(string id, int patientId, string code, int doctorId, DateTime date, string reason, CriticalityLevel criticality, AppointmentStatus status)
+    : this(patientId, doctorId, code, date, reason, criticality, status)
     {
         Id = id;
     }
